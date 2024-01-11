@@ -24,7 +24,10 @@ class CollectionExecuteBtnActionListener(
         log.info { "collection op: ${(op)}" }
 
         // 分隔符
-        val splitStr = collectionTabbedModule.splitLabel.text
+        var splitStr = collectionTabbedModule.splitLabel.text
+        if (splitStr.isEmpty()) {
+            splitStr = System.lineSeparator()
+        }
         val coll1 = getCollection(collectionTabbedModule.leftTextArea1.text, splitStr)
         val coll2 = getCollection(collectionTabbedModule.leftTextArea2.text, splitStr).toSet()
 

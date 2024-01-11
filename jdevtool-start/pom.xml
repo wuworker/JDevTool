@@ -12,26 +12,15 @@
     <artifactId>jdevtool-start</artifactId>
 
     <dependencies>
-        <!-- log -->
-        <dependency>
-            <groupId>io.github.oshai</groupId>
-            <artifactId>kotlin-logging-jvm</artifactId>
-        </dependency>
-
-        <!-- flatlaf -->
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.formdev</groupId>
-            <artifactId>flatlaf-intellij-themes</artifactId>
-        </dependency>
-
         <!-- jdevtool -->
         <dependency>
             <groupId>com.wxl.jdevtool</groupId>
             <artifactId>jdevtool-module-txt</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wxl.jdevtool</groupId>
+            <artifactId>jdevtool-module-json</artifactId>
             <version>${project.version}</version>
         </dependency>
 

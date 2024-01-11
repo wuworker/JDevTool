@@ -3,6 +3,7 @@ package com.wxl.jdevtool.listener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.Container
 import java.awt.Dimension
+import java.awt.Point
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 
@@ -15,27 +16,23 @@ open class FlowResizeComponentListener : ComponentAdapter() {
 
     private val log = KotlinLogging.logger { }
 
-    private var lastW: Int = 0
-
-    private var lastH: Int = 0
+    private val lastPointMap = hashMapOf<Container, Point>()
 
     override fun componentResized(e: ComponentEvent) {
         val panel = e.source as? Container ?: return
-
         val count = panel.componentCount
         if (count > 0) {
             val lastComponent = panel.getComponent(count - 1)
+            val nowPoint = Point(
+                lastComponent.x + lastComponent.size.width + 10,
+                lastComponent.y + lastComponent.size.height + 10
+            )
 
-            val reW = lastComponent.x + lastComponent.size.width + 10
-            val reH = lastComponent.y + lastComponent.size.height + 10
+            if (lastPointMap[panel] != nowPoint) {
+                log.info { "resize : $nowPoint" }
+                lastPointMap[panel] = nowPoint
 
-            if (reW != lastW || reH != lastH) {
-                log.debug { "resize w: $reW, h: $reH" }
-
-                lastW = reW
-                lastH = reH
-
-                panel.preferredSize = Dimension(reW, reH)
+                panel.preferredSize = Dimension(nowPoint.x, nowPoint.y)
             }
         }
     }

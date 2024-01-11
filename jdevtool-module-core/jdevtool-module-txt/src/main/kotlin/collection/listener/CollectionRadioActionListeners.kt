@@ -31,6 +31,7 @@ class SingleCollectionOpActionListener(
         collectionTabbedModule.leftTextAreaSp1.border = border
 
         // 去掉另一个集合
+        collectionTabbedModule.leftTextArea2.text = ""
         collectionTabbedModule.leftPanel.rightComponent = null
     }
 }

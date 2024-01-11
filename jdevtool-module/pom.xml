@@ -27,6 +27,10 @@
             <groupId>com.formdev</groupId>
             <artifactId>flatlaf-extras</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.formdev</groupId>
+            <artifactId>flatlaf-intellij-themes</artifactId>
+        </dependency>
 
         <!-- rsyntaxtextarea -->
         <dependency>
