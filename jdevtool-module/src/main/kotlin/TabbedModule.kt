@@ -10,9 +10,14 @@ import javax.swing.JPanel
 interface TabbedModule {
 
     /**
-     * 获取panel
+     * 初始化
      */
-    fun getPanel(): JPanel
+    fun init() {}
+
+    /**
+     * 获取主panel
+     */
+    val mainPanel: JPanel
 
     /**
      * 模块标题

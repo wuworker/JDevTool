@@ -18,6 +18,12 @@
             <artifactId>kotlin-logging-jvm</artifactId>
         </dependency>
 
+        <!-- rsyntaxtextarea -->
+        <dependency>
+            <groupId>com.fifesoft</groupId>
+            <artifactId>rsyntaxtextarea</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
