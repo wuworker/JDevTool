@@ -27,6 +27,7 @@
         <java.version>17</java.version>
         <kotlin.version>1.7.20</kotlin.version>
         <kotlin-logging.version>5.1.0</kotlin-logging.version>
+        <kotlinx.serialization.version>1.5.0</kotlinx.serialization.version>
         <flatlaf.version>3.2.5</flatlaf.version>
         <rsyntaxtextarea.version>3.3.4</rsyntaxtextarea.version>
     </properties>
@@ -49,6 +50,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- kotlinx-serialization -->
+            <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-serialization-bom</artifactId>
+                <version>${kotlinx.serialization.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
             <!-- log -->
             <dependency>
                 <groupId>io.github.oshai</groupId>

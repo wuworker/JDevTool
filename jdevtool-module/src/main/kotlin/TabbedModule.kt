@@ -15,6 +15,11 @@ interface TabbedModule {
     fun init() {}
 
     /**
+     * 选中状态变化
+     */
+    fun selectedChange(select: Boolean) {}
+
+    /**
      * 获取主panel
      */
     val mainPanel: JPanel

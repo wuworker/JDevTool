@@ -1,7 +1,11 @@
 package com.wxl.jdevtool
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf
-import com.wxl.jdevtool.configuration.JDevToolFrame
+import com.wxl.jdevtool.configuration.DefaultJDevToolStartupProcess
+import com.wxl.jdevtool.component.JDevToolFrame
+import com.wxl.jdevtool.theme.AppTheme
+import com.wxl.jdevtool.theme.AppThemeManager
+import org.fife.ui.rsyntaxtextarea.Theme
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 
@@ -13,7 +17,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder
 class JDevToolApplication
 
 fun main(args: Array<String>) {
+    // 主题设置
     FlatMacDarkLaf.setup()
+    val textAreaTheme =
+        Theme.load(DefaultJDevToolStartupProcess::class.java.getResourceAsStream("/themes/rsyntax_dark.xml"))
+    val appTheme = AppTheme(textAreaTheme)
+    AppThemeManager.theme = appTheme
 
     val context = SpringApplicationBuilder(JDevToolApplication::class.java).headless(false)
         .run(*args)

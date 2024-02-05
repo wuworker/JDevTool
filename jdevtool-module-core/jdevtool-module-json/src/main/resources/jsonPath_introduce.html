@@ -1,0 +1,158 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table td, table th {border: 1px solid white}
+    </style>
+</head>
+<h1>一、介绍</h1>
+<p>类似于XPath在xml文档中的定位，JsonPath表达式通常是用来路径检索或设置Json的。</p>
+<p>其表达式可以接受“dot–notation”和“bracket–notation”格式，例如
+    <code>$.store.book[0].title、$[&#39;store&#39;][&#39;book&#39;][0][&#39;title&#39;]</code>
+</p>
+<h1>二、操作符</h1>
+<table>
+    <thead>
+    <tr>
+        <th>符号</th>
+        <th>描述</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>$</td>
+        <td>查询的根节点对象，用于表示一个json数据，可以是数组或对象</td>
+    </tr>
+    <tr>
+        <td>@</td>
+        <td>过滤器断言（filter predicate）处理的当前节点对象，类似于java中的this字段</td>
+    </tr>
+    <tr>
+        <td>*</td>
+        <td>通配符，可以表示一个名字或数字</td>
+    </tr>
+    <tr>
+        <td>..</td>
+        <td>可以理解为递归搜索</td>
+    </tr>
+    <tr>
+        <td>.&#60;name&#62;</td>
+        <td>表示一个子节点</td>
+    </tr>
+    <tr>
+        <td>[&#39;&#60;name&#62;&#39;(,&#39;&#60;name&#62;&#39;)]</td>
+        <td>表示一个或多个子节点</td>
+    </tr>
+    <tr>
+        <td>[&#60;number&#62;(,&#60;number&#62;)]</td>
+        <td>表示一个或多个数组下标</td>
+    </tr>
+    <tr>
+        <td>[start:end]</td>
+        <td>数组片段，区间为[start,end),不包含end</td>
+    </tr>
+    <tr>
+        <td>[?(&#60;expression&#62;)]</td>
+        <td>过滤器表达式，表达式结果必须是boolean</td>
+    </tr>
+    </tbody>
+</table>
+<h1>三、函数</h1>
+<p>可以在JsonPath表达式执行后进行调用，其输入值为表达式的结果</p>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>名称</th>
+        <th>描述</th>
+        <th>输出</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>min()</td>
+        <td>获取数值类型数组的最小值</td>
+        <td>Double</td>
+    </tr>
+    <tr>
+        <td>max()</td>
+        <td>获取数值类型数组的最大值</td>
+        <td>Double</td>
+    </tr>
+    <tr>
+        <td>avg()</td>
+        <td>获取数值类型数组的平均值</td>
+        <td>Double</td>
+    </tr>
+    <tr>
+        <td>stddev()</td>
+        <td>获取数值类型数组的标准差</td>
+        <td>Double</td>
+    </tr>
+    <tr>
+        <td>length()</td>
+        <td>获取数值类型数组的长度</td>
+        <td>Integer</td>
+    </tr>
+    </tbody>
+</table>
+<h1>四、过滤器</h1>
+<p>过滤器是用于过滤数组的逻辑表达式，一个通常的表达式形如：[?(@.age &gt; 18)]，可以通过逻辑表达式&amp;&amp;或||组合多个过滤器表达式，例如[?(@.price
+    &lt; 10 &amp;&amp; @.category &#61;&#61; &#39;fiction&#39;)]，字符串必须用单引号或双引号包围，例如[?(@.color &#61;&#61;
+    &#39;blue&#39;)] or [?(@.color == &quot;blue&quot;)]。</p>
+<br>
+<table>
+    <thead>
+    <tr>
+        <th>操作符</th>
+        <th>描述</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>==</td>
+        <td>等于符号，但数字1不等于字符1</td>
+    </tr>
+    <tr>
+        <td>!=</td>
+        <td>不等于符号</td>
+    </tr>
+    <tr>
+        <td>&lt;</td>
+        <td>小于符号</td>
+    </tr>
+    <tr>
+        <td>&lt;=</td>
+        <td>小于等于符号</td>
+    </tr>
+    <tr>
+        <td>&gt;</td>
+        <td>大于符号</td>
+    </tr>
+    <tr>
+        <td>&gt;=</td>
+        <td>大于等于符号</td>
+    </tr>
+    <tr>
+        <td>=~</td>
+        <td>判断是否符合正则表达式，例如[?(@.name =~ /foo.*?/i)]</td>
+    </tr>
+    <tr>
+        <td>in</td>
+        <td>所属符号，例如[?(@.size in [‘S’, ‘M’])]</td>
+    </tr>
+    <tr>
+        <td>nin</td>
+        <td>排除符号</td>
+    </tr>
+    <tr>
+        <td>size</td>
+        <td>size of left (array or string) should match right</td>
+    </tr>
+    <tr>
+        <td>empty</td>
+        <td>判空符号</td>
+    </tr>
+    </tbody>
+</table>
+</html>

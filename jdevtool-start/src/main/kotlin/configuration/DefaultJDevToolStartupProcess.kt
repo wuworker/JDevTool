@@ -2,16 +2,19 @@ package com.wxl.jdevtool.configuration
 
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.ComponentListener
-import com.wxl.jdevtool.theme.AppTheme
 import com.wxl.jdevtool.theme.AppThemeListener
+import com.wxl.jdevtool.theme.AppThemeManager
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.fife.ui.rsyntaxtextarea.Theme
 import org.springframework.beans.factory.BeanCreationException
 import org.springframework.context.ApplicationContext
 import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.stereotype.Component
 import org.springframework.util.ReflectionUtils
+import java.awt.ItemSelectable
 import java.awt.event.ActionListener
+import java.awt.event.FocusListener
+import java.awt.event.ItemListener
+import java.awt.event.MouseListener
 import java.lang.reflect.Field
 import javax.swing.AbstractButton
 import javax.swing.event.CaretListener
@@ -106,6 +109,22 @@ class DefaultJDevToolStartupProcess : JDevToolStartupProcess {
                         }
                     }
 
+                    is ItemListener -> {
+                        if (component is ItemSelectable) {
+                            component.addItemListener(bean)
+                        } else {
+                            throw BeanCreationException("bean: $beanName is not legal ItemListener")
+                        }
+                    }
+
+                    is MouseListener -> {
+                        component.addMouseListener(bean)
+                    }
+
+                    is FocusListener -> {
+                        component.addFocusListener(bean)
+                    }
+
                     else -> {
                         throw BeanCreationException("bean: $beanName is not legal ComponentListener")
                     }
@@ -120,9 +139,7 @@ class DefaultJDevToolStartupProcess : JDevToolStartupProcess {
      * 初始化主题
      */
     override fun initTheme(context: ApplicationContext) {
-        val textAreaTheme =
-            Theme.load(DefaultJDevToolStartupProcess::class.java.getResourceAsStream("/themes/rsyntax_dark.xml"))
-        val appTheme = AppTheme(textAreaTheme)
+        val appTheme = AppThemeManager.theme!!
         val themeListeners = context.getBeanProvider(AppThemeListener::class.java).orderedStream().toList()
         for (themeListener in themeListeners) {
             themeListener.themeChange(appTheme)

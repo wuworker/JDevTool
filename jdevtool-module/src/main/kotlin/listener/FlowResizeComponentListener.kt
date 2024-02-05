@@ -14,8 +14,6 @@ import java.awt.event.ComponentEvent
  */
 open class FlowResizeComponentListener : ComponentAdapter() {
 
-    private val log = KotlinLogging.logger { }
-
     private val lastPointMap = hashMapOf<Container, Point>()
 
     override fun componentResized(e: ComponentEvent) {
@@ -29,9 +27,7 @@ open class FlowResizeComponentListener : ComponentAdapter() {
             )
 
             if (lastPointMap[panel] != nowPoint) {
-                log.info { "resize : $nowPoint" }
                 lastPointMap[panel] = nowPoint
-
                 panel.preferredSize = Dimension(nowPoint.x, nowPoint.y)
             }
         }

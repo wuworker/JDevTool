@@ -12,7 +12,7 @@
     <artifactId>jdevtool-module-core</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>jdevtool-module-txt</module>
+        <module>jdevtool-module-simple</module>
         <module>jdevtool-module-json</module>
     </modules>
 

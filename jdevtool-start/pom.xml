@@ -15,7 +15,7 @@
         <!-- jdevtool -->
         <dependency>
             <groupId>com.wxl.jdevtool</groupId>
-            <artifactId>jdevtool-module-txt</artifactId>
+            <artifactId>jdevtool-module-simple</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
