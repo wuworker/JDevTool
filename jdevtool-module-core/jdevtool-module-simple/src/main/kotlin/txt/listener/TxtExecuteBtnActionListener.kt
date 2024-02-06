@@ -1,7 +1,6 @@
 package com.wxl.jdevtool.txt.listener
 
 import com.wxl.jdevtool.ComponentListener
-import com.wxl.jdevtool.message.MessageNotifier
 import com.wxl.jdevtool.txt.TxtTabbedModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +14,6 @@ import java.awt.event.ActionListener
 @ComponentListener("txtTabbedModule.executeBtn")
 class TxtExecuteBtnActionListener(
     @Autowired val txtTabbedModule: TxtTabbedModule,
-    @Autowired val messageNotifier: MessageNotifier
 ) : ActionListener {
 
     private val log = KotlinLogging.logger { }

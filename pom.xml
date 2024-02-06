@@ -30,6 +30,7 @@
         <kotlinx.serialization.version>1.5.0</kotlinx.serialization.version>
         <flatlaf.version>3.2.5</flatlaf.version>
         <rsyntaxtextarea.version>3.3.4</rsyntaxtextarea.version>
+        <commons-text.version>1.11.0</commons-text.version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-observation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
@@ -93,6 +100,13 @@
                 <groupId>com.fifesoft</groupId>
                 <artifactId>rsyntaxtextarea</artifactId>
                 <version>${rsyntaxtextarea.version}</version>
+            </dependency>
+
+            <!-- apache commons -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

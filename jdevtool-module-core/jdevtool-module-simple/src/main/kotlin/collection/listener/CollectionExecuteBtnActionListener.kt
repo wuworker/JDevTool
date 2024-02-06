@@ -15,8 +15,7 @@ import java.awt.event.ActionListener
  */
 @ComponentListener("collectionTabbedModule.executeBtn")
 class CollectionExecuteBtnActionListener(
-    @Autowired val collectionTabbedModule: CollectionTabbedModule,
-    @Autowired val messageNotifier: MessageNotifier
+    @Autowired val collectionTabbedModule: CollectionTabbedModule
 ) : ActionListener {
 
     private val log = KotlinLogging.logger { }
