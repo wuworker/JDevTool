@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 2048 2048">
+    <g transform="scale(1)">
+        <path fill-opacity="0.7" transform="translate(450.56, 1801.76) rotate(180) scale(-1, 1)" fill="#AFB1B3"
+              d="M137 1493h295v-569h369v569h295v-1493h-295v664h-369v-664h-295v1493z"/>
+    </g>
+</svg>

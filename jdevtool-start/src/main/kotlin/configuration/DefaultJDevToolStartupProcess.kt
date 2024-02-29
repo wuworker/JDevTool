@@ -60,7 +60,7 @@ class DefaultJDevToolStartupProcess : JDevToolStartupProcess {
                 registry.register(parentId + "." + componentId.value, component)
             }
             // 递归字段判断
-            else {
+            if (!field.type.name.startsWith("java")) {
                 val subFields = getComponentFields(field.type)
                 registerField(registry, parentId + "." + componentId.value, component, subFields)
             }

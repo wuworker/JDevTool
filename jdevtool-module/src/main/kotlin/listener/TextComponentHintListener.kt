@@ -20,8 +20,8 @@ class TextComponentHintListener(
 
         if (textComponent.text == hint) {
             textComponent.text = ""
-            textComponent.foreground = UIManager.getColor("TextField.foreground")
         }
+        textComponent.foreground = UIManager.getColor("TextField.foreground")
     }
 
     override fun focusLost(e: FocusEvent) {

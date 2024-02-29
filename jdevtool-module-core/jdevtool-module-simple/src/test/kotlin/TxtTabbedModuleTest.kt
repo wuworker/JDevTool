@@ -1,4 +1,5 @@
-import com.wxl.jdevtool.TabbedModule
+package com.wxl.jdevtool
+
 import com.wxl.jdevtool.component.LabelTextPanel
 import com.wxl.jdevtool.theme.AppTheme
 import com.wxl.jdevtool.theme.AppThemeListener
