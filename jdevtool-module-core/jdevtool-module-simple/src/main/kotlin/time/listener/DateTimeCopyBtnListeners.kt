@@ -2,34 +2,24 @@ package com.wxl.jdevtool.time.listener
 
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.time.TimeTabbedModule
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import com.wxl.jdevtool.util.ClipboardUtils
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
-import javax.swing.JButton
-import javax.swing.Timer
 
 /**
  * Create by wuxingle on 2024/01/31
  * 复制内容到剪切板
  */
-abstract class AbstractCopyBtnActionListener(
-    private val timeTabbedModule: TimeTabbedModule
-) : ActionListener {
+abstract class AbstractCopyBtnActionListener : ActionListener {
 
     override fun actionPerformed(e: ActionEvent) {
-        val btn = e.source as? JButton ?: return
         val text = getText()
         if (text.isNotBlank()) {
             ClipboardUtils.setText(text)
-            timeTabbedModule.mainPanel.requestFocus()
-            btn.isEnabled = false
-
-            val timer = Timer(1000) {
-                btn.isEnabled = true
-            }
-            timer.isRepeats = false
-            timer.start()
+            Toasts.show(ToastType.SUCCESS, "复制成功")
         }
     }
 
@@ -39,7 +29,7 @@ abstract class AbstractCopyBtnActionListener(
 @ComponentListener("timeTabbedModule.nowTimeCopyBtn")
 class NowTimeCopyBtnActionListener(
     @Autowired val timeTabbedModule: TimeTabbedModule
-) : AbstractCopyBtnActionListener(timeTabbedModule) {
+) : AbstractCopyBtnActionListener() {
 
     override fun getText(): String {
         return timeTabbedModule.nowTimeText.text
@@ -49,7 +39,7 @@ class NowTimeCopyBtnActionListener(
 @ComponentListener("timeTabbedModule.nowStampCopyBtn")
 class NowStampCopyBtnActionListener(
     @Autowired val timeTabbedModule: TimeTabbedModule
-) : AbstractCopyBtnActionListener(timeTabbedModule) {
+) : AbstractCopyBtnActionListener() {
 
     override fun getText(): String {
         return timeTabbedModule.nowStampText.text
@@ -59,7 +49,7 @@ class NowStampCopyBtnActionListener(
 @ComponentListener("timeTabbedModule.stamp2TimeCopyBtn")
 class Stamp2TimeCopyBtnActionListener(
     @Autowired val timeTabbedModule: TimeTabbedModule
-) : AbstractCopyBtnActionListener(timeTabbedModule) {
+) : AbstractCopyBtnActionListener() {
 
     override fun getText(): String {
         return timeTabbedModule.stamp2TimeOutText.text
@@ -69,7 +59,7 @@ class Stamp2TimeCopyBtnActionListener(
 @ComponentListener("timeTabbedModule.time2StampCopyBtn")
 class Time2StampCopyBtnActionListener(
     @Autowired val timeTabbedModule: TimeTabbedModule
-) : AbstractCopyBtnActionListener(timeTabbedModule) {
+) : AbstractCopyBtnActionListener() {
 
     override fun getText(): String {
         return timeTabbedModule.time2StampOutText.text

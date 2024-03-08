@@ -28,7 +28,8 @@ class SingleCollectionOpActionListener(
     }
 
     override fun actionPerformed(e: ActionEvent?) {
-        collectionTabbedModule.leftTextAreaSp1.border = border
+        collectionTabbedModule.leftInputPanel1.border = border
+        collectionTabbedModule.leftChecker1.showNormal()
 
         // 去掉另一个集合
         collectionTabbedModule.leftTextArea2.text = ""
@@ -58,9 +59,11 @@ class MultiCollectionOpActionListener(
     }
 
     override fun actionPerformed(e: ActionEvent?) {
-        collectionTabbedModule.leftTextAreaSp1.border = border1
-        collectionTabbedModule.leftTextAreaSp2.border = border2
+        collectionTabbedModule.leftInputPanel1.border = border1
+        collectionTabbedModule.leftInputPanel2.border = border2
+        collectionTabbedModule.leftChecker1.showNormal()
+        collectionTabbedModule.leftChecker2.showNormal()
 
-        collectionTabbedModule.leftPanel.rightComponent = collectionTabbedModule.leftTextAreaSp2
+        collectionTabbedModule.leftPanel.rightComponent = collectionTabbedModule.leftInputPanel2
     }
 }

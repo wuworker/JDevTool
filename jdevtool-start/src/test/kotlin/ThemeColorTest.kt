@@ -10,7 +10,7 @@ import javax.swing.UIManager
 class ThemeColorTest {
 
     @Test
-    fun test(){
+    fun test() {
         FlatMacDarkLaf.setup()
 
         println(UIManager.getColor("Label.background"))
@@ -21,5 +21,7 @@ class ThemeColorTest {
         println(UIManager.getColor("Button.select"))
         println(UIManager.getColor("TextField.background"))
         println(UIManager.getColor("TextField.foreground"))
+        println(UIManager.getColor("Component.error.focusedBorderColor"))
+        println(UIManager.getColor("Component.error.borderColor"))
     }
 }

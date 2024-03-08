@@ -3,10 +3,13 @@ package com.wxl.jdevtool.time.listener
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.time.DateTimeFormatters
 import com.wxl.jdevtool.time.TimeTabbedModule
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
+import java.time.LocalTime
 import kotlin.math.abs
 
 /**
@@ -32,17 +35,24 @@ class TimeDiffTextFieldFocusListener(
             return
         }
 
+        var error = false
         val localTime1 = try {
             DateTimeFormatters.parseTime(text1)
         } catch (e: Exception) {
-            log.info(e) { "parse time error:$text1" }
-            return
+            error = true
+            timeTabbedModule.timeDiffChecker1.showWarn(false)
+            LocalTime.now()
         }
 
         val localTime2 = try {
             DateTimeFormatters.parseTime(text2)
         } catch (e: Exception) {
-            log.info(e) { "parse time error:$text2" }
+            error = true
+            timeTabbedModule.timeDiffChecker2.showWarn(false)
+            LocalTime.now()
+        }
+        if (error) {
+            Toasts.show(ToastType.ERROR, "时间格式错误")
             return
         }
 

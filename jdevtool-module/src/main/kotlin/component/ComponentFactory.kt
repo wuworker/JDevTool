@@ -17,8 +17,7 @@ object ComponentFactory {
         with(btn) {
             icon = Icons.copy
             rolloverIcon = Icons.copyHover
-            pressedIcon = Icons.copySelected
-            disabledIcon = Icons.copyDisable
+            pressedIcon = Icons.copyPress
             isContentAreaFilled = false
         }
 

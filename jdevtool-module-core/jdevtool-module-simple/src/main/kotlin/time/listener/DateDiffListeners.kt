@@ -3,10 +3,12 @@ package com.wxl.jdevtool.time.listener
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.time.DateTimeFormatters
 import com.wxl.jdevtool.time.TimeTabbedModule
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
+import java.time.LocalDate
 import java.time.Period
 import kotlin.math.abs
 
@@ -22,8 +24,6 @@ class DateDiffTextFieldFocusListener(
     @Autowired val timeTabbedModule: TimeTabbedModule
 ) : FocusAdapter() {
 
-    private val log = KotlinLogging.logger { }
-
     override fun focusLost(e: FocusEvent?) {
         val in1 = timeTabbedModule.dateDiffInText1.text
         val in2 = timeTabbedModule.dateDiffInText2.text
@@ -32,17 +32,24 @@ class DateDiffTextFieldFocusListener(
             return
         }
 
+        var error = false
         val localDate1 = try {
             DateTimeFormatters.parseDate(in1)
         } catch (e: Exception) {
-            log.info(e) { "parse date error: $in1" }
-            return
+            timeTabbedModule.dateDiffChecker1.showWarn(false)
+            error = true
+            LocalDate.now()
         }
 
         val localDate2 = try {
             DateTimeFormatters.parseDate(in2)
         } catch (e: Exception) {
-            log.info(e) { "parse date error: $in2" }
+            timeTabbedModule.dateDiffChecker2.showWarn(false)
+            error = true
+            LocalDate.now()
+        }
+        if (error) {
+            Toasts.show(ToastType.ERROR, "日期格式错误")
             return
         }
 

@@ -21,10 +21,10 @@ class TxtExecuteBtnActionListener(
     override fun actionPerformed(e: ActionEvent?) {
         // 获取输入内容
         var input = txtTabbedModule.leftTextArea.text
-        log.debug { "get input :$input" }
-        if (input.isNullOrBlank()) {
+        if (!txtTabbedModule.check()) {
             return
         }
+
         // 去掉前缀，后缀
         input = trimPrePost(input, txtTabbedModule.originPreText.text, txtTabbedModule.originPostText.text)
 

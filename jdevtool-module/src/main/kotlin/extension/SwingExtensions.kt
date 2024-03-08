@@ -1,10 +1,10 @@
 package com.wxl.jdevtool.extension
 
+import com.formdev.flatlaf.FlatClientProperties
 import com.wxl.jdevtool.listener.ClickRequestFocusMouseListener
-import com.wxl.jdevtool.listener.TextComponentHintListener
-import java.awt.Color
 import java.awt.Component
 import java.awt.Window
+import javax.swing.JTextField
 import javax.swing.text.JTextComponent
 
 /**
@@ -74,10 +74,15 @@ fun Component.enableClickRequestFocus() {
 /**
  * JTextComponent 设置提示
  */
-fun JTextComponent.setHint(hint: String) {
-    text = hint
-    foreground = Color.GRAY
-    addFocusListener(TextComponentHintListener(hint, Color.GRAY))
+fun JTextField.setHint(hint: String) {
+    putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, hint)
+}
+
+/**
+ * 显示清空按钮
+ */
+fun JTextField.showClear() {
+    putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true)
 }
 
 /**
@@ -91,6 +96,10 @@ enum class TextInputType {
     DATE, TIME, DATETIME
 }
 
+/**
+ * JTextComponent 设置输入类型
+ * 加在原document的listener会不生效
+ */
 fun JTextComponent.setInputType(type: TextInputType) {
     document = when (type) {
         TextInputType.NUMBER -> CandidatePlainDocument("0123456789")

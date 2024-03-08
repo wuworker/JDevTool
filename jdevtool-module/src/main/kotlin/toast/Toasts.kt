@@ -22,8 +22,8 @@ object Toasts {
     fun show(
         type: ToastType,
         message: String,
-        location: ToastLocation = ToastLocation.TOP_CENTER,
-        duration: Long = FlatUIUtils.getUIInt(ToastProperties.TOAST_DURATION, 2500).toLong()
+        location: ToastLocation = ToastLocation.TOP_RIGHT,
+        duration: Long = FlatUIUtils.getUIInt(ToastProperties.TOAST_DURATION, 2000).toLong()
     ) {
         notifications.show(type, message, location, duration)
     }
@@ -33,8 +33,8 @@ object Toasts {
      */
     fun show(
         component: JComponent,
-        location: ToastLocation = ToastLocation.TOP_CENTER,
-        duration: Long = FlatUIUtils.getUIInt(ToastProperties.TOAST_DURATION, 2500).toLong()
+        location: ToastLocation = ToastLocation.TOP_RIGHT,
+        duration: Long = FlatUIUtils.getUIInt(ToastProperties.TOAST_DURATION, 2000).toLong()
     ) {
         notifications.show(component, location, duration)
     }

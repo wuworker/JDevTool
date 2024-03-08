@@ -3,6 +3,7 @@ package com.wxl.jdevtool.escape
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
+import com.wxl.jdevtool.validate.InputChecker
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.text.JTextComponent
 
 /**
  * Create by wuxingle on 2024/02/05
@@ -59,6 +62,8 @@ class EscapeTabbedModule : TabbedModule {
 
     final val leftTextAreaSp: RTextScrollPane
 
+    final val leftChecker: InputChecker
+
     @ComponentId("rightTextArea")
     final val rightTextArea: RSyntaxTextArea
 
@@ -81,6 +86,16 @@ class EscapeTabbedModule : TabbedModule {
         downPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT)
         leftTextArea = RSyntaxTextArea()
         leftTextAreaSp = RTextScrollPane(leftTextArea)
+        leftChecker = object : InputChecker(leftTextArea, leftTextAreaSp) {
+            override fun doCheck(component: JTextComponent): Boolean {
+                return !leftTextArea.text.isNullOrBlank()
+            }
+
+            override fun documentUpdate(e: DocumentEvent) {
+                showNormal()
+            }
+        }
+
         rightTextArea = RSyntaxTextArea()
         rightTextAreaSp = RTextScrollPane(rightTextArea)
 
@@ -122,6 +137,13 @@ class EscapeTabbedModule : TabbedModule {
         }
 
         // 下方文本域
+        val leftPanel = JPanel(BorderLayout())
+        leftPanel.border = BorderFactory.createTitledBorder("输入：")
+        leftPanel.add(leftTextAreaSp)
+
+        val rightPanel = JPanel(BorderLayout())
+        rightPanel.border = BorderFactory.createTitledBorder("结果：")
+        rightPanel.add(rightTextAreaSp)
 
         with(downPanel) {
             leftTextArea.lineWrap = true
@@ -135,11 +157,10 @@ class EscapeTabbedModule : TabbedModule {
             rightTextArea.isCodeFoldingEnabled = true
             rightTextAreaSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
             rightTextAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-            rightTextAreaSp.border = BorderFactory.createTitledBorder("结果：")
 
             resizeWeight = 0.5
-            leftComponent = leftTextAreaSp
-            rightComponent = rightTextAreaSp
+            leftComponent = leftPanel
+            rightComponent = rightPanel
         }
 
         with(mainPanel) {

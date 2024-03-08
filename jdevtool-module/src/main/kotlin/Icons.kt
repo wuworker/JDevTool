@@ -32,12 +32,12 @@ object Icons {
         loadSvg("icons/copyBtnHover.svg")
     }
 
-    val copySelected: Icon by lazy {
-        loadSvg("icons/copyBtnSelected.svg")
+    val copyPress: Icon by lazy {
+        loadSvg("icons/copyBtnPress.svg")
     }
 
-    val copyDisable: Icon by lazy {
-        loadSvg("icons/copyBtnDisable.svg")
+    val copySelected: Icon by lazy {
+        loadSvg("icons/copyBtnSelected.svg")
     }
 
     // 帮助按钮

@@ -21,9 +21,10 @@ class EscapeBtnActionListener(
 
     override fun actionPerformed(e: ActionEvent) {
         val text = escapeTabbedModule.leftTextArea.text
-        if (text.isBlank()) {
+        if (!escapeTabbedModule.leftChecker.check()) {
             return
         }
+
         val escapeType = EscapeType.valueOf(escapeTabbedModule.radioGroup.selection.actionCommand)
         val escapeText = when (escapeType) {
             EscapeType.STRING -> EscapeUtils.escapeString(text)
@@ -45,7 +46,7 @@ class UnescapeBtnActionListener(
 
     override fun actionPerformed(e: ActionEvent) {
         val text = escapeTabbedModule.leftTextArea.text
-        if (text.isBlank()) {
+        if (!escapeTabbedModule.leftChecker.check()) {
             return
         }
         val escapeType = EscapeType.valueOf(escapeTabbedModule.radioGroup.selection.actionCommand)

@@ -3,7 +3,6 @@ package com.wxl.jdevtool.collection.listener
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.collection.CollectionOps
 import com.wxl.jdevtool.collection.CollectionTabbedModule
-import com.wxl.jdevtool.message.MessageNotifier
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
@@ -20,8 +19,8 @@ class CollectionExecuteBtnActionListener(
 
     private val log = KotlinLogging.logger { }
 
-    override fun actionPerformed(e: ActionEvent?) {
-        if (collectionTabbedModule.leftTextArea1.text.isBlank()) {
+    override fun actionPerformed(e: ActionEvent) {
+        if (!collectionTabbedModule.check()) {
             return
         }
 
@@ -29,10 +28,7 @@ class CollectionExecuteBtnActionListener(
         log.info { "collection op: ${(op)}" }
 
         // 分隔符
-        var splitStr = collectionTabbedModule.splitLabel.text
-        if (splitStr.isEmpty()) {
-            splitStr = System.lineSeparator()
-        }
+        val splitStr = collectionTabbedModule.splitLabel.text
         val coll1 = getCollection(collectionTabbedModule.leftTextArea1.text, splitStr)
         val coll2 = getCollection(collectionTabbedModule.leftTextArea2.text, splitStr).toSet()
 

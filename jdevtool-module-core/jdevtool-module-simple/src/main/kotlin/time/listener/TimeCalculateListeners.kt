@@ -5,6 +5,8 @@ import com.wxl.jdevtool.time.DateTimeFormatters
 import com.wxl.jdevtool.time.TimeOp
 import com.wxl.jdevtool.time.TimeTabbedModule
 import com.wxl.jdevtool.time.TimeUnit
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.FocusAdapter
@@ -46,7 +48,9 @@ class TimeCalculateComboBoxItemListener(
 ) : ItemListener {
 
     override fun itemStateChanged(e: ItemEvent) {
-        calculateTime(timeTabbedModule)
+        if (e.stateChange == ItemEvent.SELECTED) {
+            calculateTime(timeTabbedModule)
+        }
     }
 }
 
@@ -65,9 +69,11 @@ private fun calculateTime(timeTabbedModule: TimeTabbedModule) {
     val localTime = try {
         DateTimeFormatters.parseTime(inText)
     } catch (e: Exception) {
-        log.info(e) { "parse time error: $inText" }
+        timeTabbedModule.timeCalculateChecker.showWarn(false)
+        Toasts.show(ToastType.ERROR, "时间格式错误")
         return
     }
+
     val n = try {
         unitText.toLong()
     } catch (e: Exception) {

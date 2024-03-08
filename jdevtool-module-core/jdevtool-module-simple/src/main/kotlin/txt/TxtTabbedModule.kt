@@ -4,7 +4,8 @@ import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.component.LabelTextPanel
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.wxl.jdevtool.validate.InputChecker
+import com.wxl.jdevtool.validate.InputValidateGroup
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
@@ -14,6 +15,8 @@ import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.awt.GridLayout
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.text.JTextComponent
 
 /**
  * Create by wuxingle on 2024/01/02
@@ -68,6 +71,10 @@ class TxtTabbedModule : TabbedModule {
     @ComponentId("leftTextArea")
     final val leftTextArea: RSyntaxTextArea
 
+    final val leftSp: RTextScrollPane
+
+    final val leftChecker: InputChecker
+
     @ComponentId("rightTextArea")
     final val rightTextArea: RSyntaxTextArea
 
@@ -101,6 +108,16 @@ class TxtTabbedModule : TabbedModule {
 
         // 左边输入
         leftTextArea = RSyntaxTextArea()
+        leftSp = RTextScrollPane(leftTextArea)
+        leftChecker = object : InputChecker(leftTextArea, leftSp) {
+            override fun doCheck(component: JTextComponent): Boolean {
+                return !component.text.isNullOrBlank()
+            }
+
+            override fun documentUpdate(e: DocumentEvent) {
+                showNormal()
+            }
+        }
 
         // 右边输出
         rightTextArea = RSyntaxTextArea()
@@ -152,7 +169,6 @@ class TxtTabbedModule : TabbedModule {
             syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
             isCodeFoldingEnabled = true
         }
-        val leftSp = RTextScrollPane(leftTextArea)
         leftSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
         leftSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 
@@ -178,6 +194,13 @@ class TxtTabbedModule : TabbedModule {
             add(headPanel, BorderLayout.NORTH)
             add(downPanel)
         }
+    }
+
+    /**
+     * 输入校验
+     */
+    fun check(): Boolean {
+        return InputValidateGroup(originSplitText, leftChecker).check(true)
     }
 
     /**

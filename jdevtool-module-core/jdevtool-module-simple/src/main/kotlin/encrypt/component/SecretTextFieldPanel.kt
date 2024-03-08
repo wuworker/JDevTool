@@ -100,10 +100,10 @@ class SecretTextFieldPanel(
 
         keyCopyBtn = JButton()
         with(keyCopyBtn) {
-            icon = Icons.copy
-            rolloverIcon = Icons.copyHover
+            icon = Icons.copyHover
+            rolloverIcon = Icons.copyPress
             pressedIcon = Icons.copySelected
-            disabledIcon = Icons.copyDisable
+            disabledIcon = Icons.copy
 
             background = textField.background
             foreground = textField.foreground

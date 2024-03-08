@@ -1,11 +1,15 @@
 package com.wxl.jdevtool.component
 
+import com.formdev.flatlaf.FlatClientProperties
 import com.wxl.jdevtool.Icons
+import com.wxl.jdevtool.validate.InputChecker
+import com.wxl.jdevtool.validate.InputValidate
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.awt.FlowLayout
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
 import java.io.Serial
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.text.JTextComponent
 
 
 /**
@@ -14,21 +18,25 @@ import javax.swing.*
  */
 class LabelTextPanel(
     labelTxt: String = ""
-) : JPanel(FlowLayout()) {
+) : JPanel(FlowLayout()), InputValidate {
 
-    private var newLine = false
+    private val log = KotlinLogging.logger { }
+
+    private var lastSelected = false
 
     private val lineSeparator: String = System.lineSeparator()
+
+    private val inputChecker: InputChecker
 
     val label: JLabel
 
     val textField: JTextField
 
-    val newLineBtn: JButton
+    val newLineBtn: JToggleButton
 
     val text: String
         get() {
-            return if (newLine) {
+            return if (newLineBtn.isSelected) {
                 lineSeparator
             } else {
                 textField.text
@@ -38,61 +46,71 @@ class LabelTextPanel(
     init {
         label = JLabel(labelTxt)
 
-        textField = JTextField(3)
-        newLineBtn = JButton(Icons.newLine)
+        textField = JTextField(4)
+
+        val toolbar = JToolBar()
+        newLineBtn = JToggleButton(Icons.newLine)
         with(newLineBtn) {
-            background = textField.background
-            foreground = textField.foreground
-            border = BorderFactory.createEmptyBorder()
+            isContentAreaFilled = false
+            rolloverIcon = Icons.newLineHover
+            selectedIcon = Icons.newLineSelected
             toolTipText = "匹配换行${lineSeparator}启用后相当于输入换行符"
         }
+        toolbar.add(newLineBtn)
+        textField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, toolbar)
 
-        val box = Box.createHorizontalBox()
-        box.border = textField.border
-        box.add(textField)
-        box.add(newLineBtn)
+        inputChecker = object : InputChecker(textField) {
 
-        textField.border = BorderFactory.createEmptyBorder()
+            override fun doCheck(component: JTextComponent): Boolean {
+                return this@LabelTextPanel.text.isNotEmpty()
+            }
+
+            override fun documentUpdate(e: DocumentEvent) {
+                showNormal()
+            }
+        }
 
         add(label)
-        add(box)
+        add(textField)
 
         addBtnListener()
     }
 
     private fun addBtnListener() {
-        newLineBtn.addMouseListener(object : MouseAdapter() {
-            override fun mouseEntered(e: MouseEvent?) {
-                if (!newLine) {
-                    newLineBtn.icon = Icons.newLineHover
-                }
+        newLineBtn.addChangeListener {
+            val btn = it.source as JToggleButton
+            val selected = btn.isSelected
+            if (selected == lastSelected) {
+                return@addChangeListener
             }
 
-            override fun mouseExited(e: MouseEvent?) {
-                if (!newLine) {
-                    newLineBtn.icon = Icons.newLine
-                }
-            }
-        })
-        newLineBtn.addActionListener {
-            newLine = !newLine
-            if (newLine) {
-                newLineBtn.icon = Icons.newLineSelected
+            log.info { "change: $it" }
+            inputChecker.showNormal()
+            textField.requestFocus()
+            if (selected) {
                 textField.text = ""
                 textField.isEditable = false
             } else {
                 textField.isEditable = true
-                newLineBtn.icon = Icons.newLineHover
             }
+            lastSelected = selected
         }
     }
 
     fun clearText() {
         textField.text = ""
-        newLine = false
-        newLineBtn.icon = Icons.newLine
+        newLineBtn.isSelected = false
     }
 
+    fun setNewLine() {
+        newLineBtn.isSelected = true
+    }
+
+    override val component = textField
+
+    override fun check(focus: Boolean): Boolean {
+        return inputChecker.check(focus)
+    }
 
     companion object {
         @Serial

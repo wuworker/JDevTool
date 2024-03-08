@@ -1,20 +1,20 @@
 package com.wxl.jdevtool.time
 
+import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.component.ComponentFactory
-import com.wxl.jdevtool.extension.TextInputType
-import com.wxl.jdevtool.extension.enableClickRequestFocus
-import com.wxl.jdevtool.extension.setHint
-import com.wxl.jdevtool.extension.setInputType
+import com.wxl.jdevtool.extension.*
 import com.wxl.jdevtool.message.MessageNotifier
+import com.wxl.jdevtool.validate.InputChecker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import java.awt.Color
 import java.awt.FlowLayout
 import java.awt.Font
+import java.awt.event.FocusEvent
 import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,6 +22,8 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.text.JTextComponent
 
 /**
  * Create by wuxingle on 2024/01/29
@@ -38,6 +40,7 @@ class TimeTabbedModule(
 
     final override val mainPanel: JPanel
 
+    // 时区选择，当前时间
     final val timeZoneCombox: JComboBox<TimeZoneEnum>
 
     final val formatTimeLabel: JLabel
@@ -52,7 +55,10 @@ class TimeTabbedModule(
     @ComponentId("nowStampCopyBtn")
     final val nowStampCopyBtn: JButton
 
+    // 时间戳转换
     final val stamp2TimeInText: JTextField
+
+    final val stamp2TimeInChecker: InputChecker
 
     @ComponentId("stamp2TimeConvertBtn")
     final val stamp2TimeConvertBtn: JButton
@@ -64,6 +70,8 @@ class TimeTabbedModule(
 
     final val time2StampInText: JTextField
 
+    final val time2StampInChecker: InputChecker
+
     @ComponentId("time2StampConvertBtn")
     final val time2StampConvertBtn: JButton
 
@@ -72,8 +80,11 @@ class TimeTabbedModule(
     @ComponentId("time2StampCopyBtn")
     final val time2StampCopyBtn: JButton
 
+    // 日期计算
     @ComponentId("dateCalculateInText")
     final val dateCalculateInText: JTextField
+
+    final val dateCalculateChecker: InputChecker
 
     @ComponentId("dateOpComboBox")
     final val dateOpComboBox: JComboBox<TimeOp>
@@ -89,13 +100,20 @@ class TimeTabbedModule(
     @ComponentId("dateDiffInText1")
     final val dateDiffInText1: JTextField
 
+    final val dateDiffChecker1: InputChecker
+
     @ComponentId("dateDiffInText2")
     final val dateDiffInText2: JTextField
 
+    final val dateDiffChecker2: InputChecker
+
     final val dateDiffOutText: JTextField
 
+    // 时间计算
     @ComponentId("timeCalculateInText")
     final val timeCalculateInText: JTextField
+
+    final val timeCalculateChecker: InputChecker
 
     @ComponentId("timeOpComboBox")
     final val timeOpComboBox: JComboBox<TimeOp>
@@ -111,8 +129,12 @@ class TimeTabbedModule(
     @ComponentId("timeDiffInText1")
     final val timeDiffInText1: JTextField
 
+    final val timeDiffChecker1: InputChecker
+
     @ComponentId("timeDiffInText2")
     final val timeDiffInText2: JTextField
+
+    final val timeDiffChecker2: InputChecker
 
     final val timeDiffOutText: JTextField
 
@@ -150,44 +172,59 @@ class TimeTabbedModule(
         nowStampCopyBtn = ComponentFactory.createCopyBtn()
 
         // 时间转换
-        stamp2TimeInText = JTextField(20)
+        stamp2TimeInText = createJTextField(20, TextInputType.NUMBER)
+        stamp2TimeInChecker = NotBlankInputChecker(stamp2TimeInText)
         stamp2TimeConvertBtn = JButton("转换")
-        stamp2TimeOutText = JTextField(20)
+        stamp2TimeOutText = createJTextField(20, null)
         stamp2TimeCopyBtn = ComponentFactory.createCopyBtn()
 
-        time2StampInText = JTextField(20)
+        time2StampInText = createJTextField(20, TextInputType.DATETIME)
+        time2StampInChecker = NotBlankInputChecker(time2StampInText)
+
         time2StampConvertBtn = JButton("转换")
-        time2StampOutText = JTextField(20)
+        time2StampOutText = createJTextField(20, null)
         time2StampCopyBtn = ComponentFactory.createCopyBtn()
 
         // 日期计算
-        dateCalculateInText = JTextField(10)
-        dateOpComboBox = JComboBox(TimeOp.values())
-        dateUnitText = JTextField(4)
-        dateUnitComboBox = JComboBox(DateUnit.values())
-        dateCalculateOutText = JTextField(10)
+        dateCalculateInText = createJTextField(10, TextInputType.DATE)
+        dateCalculateChecker = AllTrueInputChecker(dateCalculateInText)
 
-        dateDiffInText1 = JTextField(10)
-        dateDiffInText2 = JTextField(10)
-        dateDiffOutText = JTextField(15)
+        dateOpComboBox = JComboBox(TimeOp.values())
+        dateUnitText = createJTextField(4, TextInputType.NUMBER)
+
+        dateUnitComboBox = JComboBox(DateUnit.values())
+        dateCalculateOutText = createJTextField(10, null)
+
+        dateDiffInText1 = createJTextField(10, TextInputType.DATE)
+        dateDiffChecker1 = AllTrueInputChecker(dateDiffInText1)
+
+        dateDiffInText2 = createJTextField(10, TextInputType.DATE)
+        dateDiffChecker2 = AllTrueInputChecker(dateDiffInText2)
+
+        dateDiffOutText = createJTextField(15, null)
 
         // 时间计算
-        timeCalculateInText = JTextField(10)
+        timeCalculateInText = createJTextField(10, TextInputType.TIME)
+        timeCalculateChecker = AllTrueInputChecker(timeCalculateInText)
+
         timeOpComboBox = JComboBox(TimeOp.values())
-        timeUnitText = JTextField(4)
+        timeUnitText = createJTextField(4, TextInputType.NUMBER)
         timeUnitComboBox = JComboBox(TimeUnit.values())
-        timeCalculateOutText = JTextField(10)
+        timeCalculateOutText = createJTextField(10, null)
 
-        timeDiffInText1 = JTextField(10)
-        timeDiffInText2 = JTextField(10)
-        timeDiffOutText = JTextField(20)
+        timeDiffInText1 = createJTextField(10, TextInputType.TIME)
+        timeDiffChecker1 = AllTrueInputChecker(timeDiffInText1)
 
-        timeSText = JTextField(5)
-        timeMText = JTextField(4)
-        timeMSText = JTextField(4)
-        timeHText = JTextField(4)
-        timeHMText = JTextField(4)
-        timeHMSText = JTextField(4)
+        timeDiffInText2 = createJTextField(10, TextInputType.TIME)
+        timeDiffChecker2 = AllTrueInputChecker(timeDiffInText2)
+        timeDiffOutText = createJTextField(20, null)
+
+        timeSText = createJTextField(5, TextInputType.NUMBER)
+        timeMText = createJTextField(4, TextInputType.NUMBER)
+        timeMSText = createJTextField(4, TextInputType.NUMBER)
+        timeHText = createJTextField(4, TextInputType.NUMBER)
+        timeHMText = createJTextField(4, TextInputType.NUMBER)
+        timeHMSText = createJTextField(4, TextInputType.NUMBER)
 
         timer = Timer(1000) {
             showCurrentTime()
@@ -222,52 +259,49 @@ class TimeTabbedModule(
 
         val nowTimePanel = JPanel(FlowLayout(FlowLayout.LEFT))
         nowTimeText.isEditable = false
+        nowTimeText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, nowTimeCopyBtn)
         with(nowTimePanel) {
             add(JLabel("现在的当地时间："))
             add(nowTimeText)
-            add(nowTimeCopyBtn)
         }
 
         val nowStampPanel = JPanel(FlowLayout(FlowLayout.LEFT))
         nowStampText.isEditable = false
+        nowStampText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, nowStampCopyBtn)
+
         with(nowStampPanel) {
             add(JLabel("现在的时间戳："))
             add(nowStampText)
-            add(nowStampCopyBtn)
         }
 
         // 时间戳转换
         val stamp2TimeTitlePanel = JPanel(FlowLayout(FlowLayout.LEFT))
         stamp2TimeTitlePanel.add(JLabel(">> 时间戳和当地时间转换"))
 
-        val stamp2TimePanel = JPanel()
-        stamp2TimeInText.setInputType(TextInputType.NUMBER)
+        val stamp2TimePanel = JPanel(FlowLayout(FlowLayout.LEFT))
         stamp2TimeInText.setHint(System.currentTimeMillis().toString())
         with(stamp2TimePanel) {
             add(stamp2TimeInText)
             add(stamp2TimeConvertBtn)
             add(stamp2TimeOutText)
-            add(stamp2TimeCopyBtn)
         }
+        stamp2TimeOutText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, stamp2TimeCopyBtn)
 
-        val time2StampPanel = JPanel()
-        time2StampInText.setInputType(TextInputType.DATETIME)
+        val time2StampPanel = JPanel(FlowLayout(FlowLayout.LEFT))
         time2StampInText.setHint(DateTimeFormatters.formatDateTime(LocalDateTime.now()))
         with(time2StampPanel) {
             add(time2StampInText)
             add(time2StampConvertBtn)
             add(time2StampOutText)
-            add(time2StampCopyBtn)
         }
+        time2StampOutText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, time2StampCopyBtn)
 
         // 日期计算
         val dateCalculateTitlePanel = JPanel(FlowLayout(FlowLayout.LEFT))
         dateCalculateTitlePanel.add(JLabel(">> 日期计算"))
 
         val dateCalculatePanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        dateCalculateInText.setInputType(TextInputType.DATE)
         dateCalculateInText.setHint(DateTimeFormatters.formatDate(LocalDate.now()))
-        dateUnitText.setInputType(TextInputType.NUMBER)
         with(dateCalculatePanel) {
             add(JLabel("日期加减："))
             add(dateCalculateInText)
@@ -279,9 +313,7 @@ class TimeTabbedModule(
         }
 
         val dateDiffPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        dateDiffInText1.setInputType(TextInputType.DATE)
         dateDiffInText1.setHint(DateTimeFormatters.formatDate(LocalDate.now()))
-        dateDiffInText2.setInputType(TextInputType.DATE)
         dateDiffInText2.setHint(DateTimeFormatters.formatDate(LocalDate.now()))
         with(dateDiffPanel) {
             add(JLabel("日期相差："))
@@ -297,9 +329,7 @@ class TimeTabbedModule(
         timmeCalculateTitlePanel.add(JLabel(">> 时间计算"))
 
         val timeCalculatePanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        timeCalculateInText.setInputType(TextInputType.TIME)
         timeCalculateInText.setHint(DateTimeFormatters.formatTime(LocalTime.now()))
-        timeUnitText.setInputType(TextInputType.NUMBER)
         with(timeCalculatePanel) {
             add(JLabel("时间加减："))
             add(timeCalculateInText)
@@ -311,9 +341,7 @@ class TimeTabbedModule(
         }
 
         val timeDiffPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        timeDiffInText1.setInputType(TextInputType.TIME)
         timeDiffInText1.setHint(DateTimeFormatters.formatTime(LocalTime.now()))
-        timeDiffInText2.setInputType(TextInputType.TIME)
         timeDiffInText2.setHint(DateTimeFormatters.formatTime(LocalTime.now()))
         with(timeDiffPanel) {
             add(JLabel("时间相差："))
@@ -325,12 +353,6 @@ class TimeTabbedModule(
         }
 
         val timeUnitConvertPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        timeSText.setInputType(TextInputType.NUMBER)
-        timeMText.setInputType(TextInputType.NUMBER)
-        timeMSText.setInputType(TextInputType.NUMBER)
-        timeHText.setInputType(TextInputType.NUMBER)
-        timeHMText.setInputType(TextInputType.NUMBER)
-        timeHMSText.setInputType(TextInputType.NUMBER)
         with(timeUnitConvertPanel) {
             add(JLabel("时间转换："))
             add(timeSText)
@@ -398,6 +420,44 @@ class TimeTabbedModule(
     fun getSelectedZone(): ZoneId {
         val timeZone = timeZoneCombox.selectedItem as TimeZoneEnum
         return ZoneId.of(timeZone.id)
+    }
+
+    /**
+     * JTextField默认样式
+     */
+    private fun createJTextField(column: Int = 0, inputType: TextInputType? = null): JTextField {
+        val textField = JTextField(column)
+        if (inputType != null) {
+            textField.setInputType(inputType)
+        }
+        textField.showClear()
+        return textField
+    }
+
+    private class NotBlankInputChecker(com: JTextComponent) : InputChecker(com) {
+
+        override fun doCheck(component: JTextComponent) = !component.text.isNullOrBlank()
+
+        override fun focusLost(e: FocusEvent) {
+            showNormal()
+        }
+
+        override fun documentUpdate(e: DocumentEvent) {
+            showNormal()
+        }
+    }
+
+    private class AllTrueInputChecker(com: JTextComponent) : InputChecker(com) {
+
+        override fun doCheck(component: JTextComponent) = true
+
+        override fun focusLost(e: FocusEvent) {
+            showNormal()
+        }
+
+        override fun documentUpdate(e: DocumentEvent) {
+            showNormal()
+        }
     }
 
     /**

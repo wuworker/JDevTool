@@ -18,6 +18,7 @@ import java.awt.event.MouseListener
 import java.lang.reflect.Field
 import javax.swing.AbstractButton
 import javax.swing.event.CaretListener
+import javax.swing.event.DocumentListener
 import javax.swing.text.JTextComponent
 
 /**
@@ -123,6 +124,14 @@ class DefaultJDevToolStartupProcess : JDevToolStartupProcess {
 
                     is FocusListener -> {
                         component.addFocusListener(bean)
+                    }
+
+                    is DocumentListener -> {
+                        if (component is JTextComponent) {
+                            component.document.addDocumentListener(bean)
+                        } else {
+                            throw BeanCreationException("bean: $beanName is not legal DocumentListener")
+                        }
                     }
 
                     else -> {

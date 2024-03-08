@@ -3,6 +3,8 @@ package com.wxl.jdevtool.time.listener
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.time.DateTimeFormatters
 import com.wxl.jdevtool.time.TimeTabbedModule
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -18,17 +20,19 @@ class Stamp2TimeBtnActionListener(
 ) : ActionListener {
 
     override fun actionPerformed(e: ActionEvent) {
-        val inText = timeTabbedModule.stamp2TimeInText.text.trim()
-        if (inText.isBlank()) {
+        val checker = timeTabbedModule.stamp2TimeInChecker
+        if (!checker.check()) {
             return
         }
 
+        val inText = timeTabbedModule.stamp2TimeInText.text.trim()
         try {
             val selectedZone = timeTabbedModule.getSelectedZone()
             val localDateTime = Instant.ofEpochMilli(inText.toLong()).atZone(selectedZone).toLocalDateTime()
             timeTabbedModule.stamp2TimeOutText.text = DateTimeFormatters.formatDateTime(localDateTime)
         } catch (e: Exception) {
-            timeTabbedModule.stamp2TimeOutText.text = "输入格式错误"
+            checker.showWarn(true)
+            Toasts.show(ToastType.ERROR, "时间戳格式错误")
         }
     }
 }
@@ -39,8 +43,9 @@ class Time2StampBtnActionListener(
 ) : ActionListener {
 
     override fun actionPerformed(e: ActionEvent) {
+        val checker = timeTabbedModule.time2StampInChecker
         val inText = timeTabbedModule.time2StampInText.text.trim()
-        if (inText.isBlank()) {
+        if (!checker.check()) {
             return
         }
 
@@ -58,10 +63,16 @@ class Time2StampBtnActionListener(
                 val dateTime = LocalDateTime.of(LocalDate.now(), DateTimeFormatters.parseTime(inText))
                 ms = ZonedDateTime.of(dateTime, selectedZone).toInstant().toEpochMilli()
             }
-        } catch (e: Exception) {
-            //ignore
-        }
+            if (ms == null) {
+                checker.showWarn(true)
+                Toasts.show(ToastType.ERROR, "时间格式错误")
+                return
+            }
 
-        timeTabbedModule.time2StampOutText.text = ms?.toString() ?: "输入格式错误"
+            timeTabbedModule.time2StampOutText.text = ms.toString()
+        } catch (e: Exception) {
+            checker.showWarn(true)
+            Toasts.show(ToastType.ERROR, "时间格式错误")
+        }
     }
 }
