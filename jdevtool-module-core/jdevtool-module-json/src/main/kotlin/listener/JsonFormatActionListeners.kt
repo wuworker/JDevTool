@@ -3,7 +3,8 @@ package com.wxl.jdevtool.json.listener
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.json.JsonTabbedModule
 import com.wxl.jdevtool.json.JsonUtils
-import com.wxl.jdevtool.message.MessageNotifier
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import kotlinx.serialization.json.Json
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
@@ -16,13 +17,12 @@ import java.awt.event.ActionListener
 
 @ComponentListener("jsonTabbedModule.expandBtn")
 class JsonExpandActionListener(
-    @Autowired val jsonTabbedModule: JsonTabbedModule,
-    @Autowired val messageNotifier: MessageNotifier
+    @Autowired val jsonTabbedModule: JsonTabbedModule
 ) : ActionListener {
 
     override fun actionPerformed(e: ActionEvent?) {
-        val text = jsonTabbedModule.leftTextArea.text
-        if (text.isBlank()) {
+        jsonTabbedModule.jsonPathChecker.showNormal()
+        if (!jsonTabbedModule.leftInChecker.check()) {
             return
         }
 
@@ -30,32 +30,38 @@ class JsonExpandActionListener(
         jsonTabbedModule.hiddenRight()
 
         try {
+            val text = jsonTabbedModule.leftTextArea.text
             jsonTabbedModule.leftTextArea.text = JsonUtils.formatJson(text)
+            jsonTabbedModule.jsonPathChecker.showNormal()
+            jsonTabbedModule.leftInChecker.showNormal()
         } catch (e: Exception) {
-            messageNotifier.showMessage("输入json格式错误")
+            jsonTabbedModule.leftInChecker.showWarn()
+            Toasts.show(ToastType.ERROR, "Json格式错误")
         }
     }
 }
 
 @ComponentListener("jsonTabbedModule.compressBtn")
 class JsonCompressActionListener(
-    @Autowired val jsonTabbedModule: JsonTabbedModule,
-    @Autowired val messageNotifier: MessageNotifier
+    @Autowired val jsonTabbedModule: JsonTabbedModule
 ) : ActionListener {
 
     override fun actionPerformed(e: ActionEvent?) {
-        val text = jsonTabbedModule.leftTextArea.text
-        if (text.isBlank()) {
+        jsonTabbedModule.jsonPathChecker.showNormal()
+        if (!jsonTabbedModule.leftInChecker.check()) {
             return
         }
-
         // 去掉另一个框
         jsonTabbedModule.hiddenRight()
 
         try {
+            val text = jsonTabbedModule.leftTextArea.text
             jsonTabbedModule.leftTextArea.text = Json.parseToJsonElement(text).toString()
+            jsonTabbedModule.jsonPathChecker.showNormal()
+            jsonTabbedModule.leftInChecker.showNormal()
         } catch (e: Exception) {
-            messageNotifier.showMessage("输入json格式错误")
+            jsonTabbedModule.leftInChecker.showWarn()
+            Toasts.show(ToastType.ERROR, "Json格式错误")
         }
     }
 }

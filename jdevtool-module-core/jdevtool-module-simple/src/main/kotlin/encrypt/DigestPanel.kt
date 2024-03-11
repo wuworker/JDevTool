@@ -88,6 +88,28 @@ class DigestPanel : JPanel() {
         add(downPanel)
     }
 
+    fun checkInput(): Boolean {
+        if (!inByteArea.check()) {
+            return false
+        }
+        if (inByteArea.data.isEmpty()) {
+            inByteArea.inputChecker.showWarn()
+            return false
+        }
+        return true
+    }
+
+    fun checkSecret(): Boolean {
+        if (!secretTextField.check()) {
+            return false
+        }
+        if (secretTextField.key.isEmpty()) {
+            secretTextField.inputChecker.showWarn()
+            return false
+        }
+        return true
+    }
+
     companion object {
         @Serial
         private const val serialVersionUID: Long = 2761043662734894733L

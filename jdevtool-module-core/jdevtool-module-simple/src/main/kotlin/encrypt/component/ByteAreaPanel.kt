@@ -2,26 +2,27 @@ package com.wxl.jdevtool.encrypt.component
 
 import com.wxl.jdevtool.encrypt.KeyShowStyle
 import com.wxl.jdevtool.encrypt.extension.*
+import com.wxl.jdevtool.validate.InputChecker
+import com.wxl.jdevtool.validate.InputValidate
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
-import java.awt.Color
 import java.awt.Component
 import java.awt.FlowLayout
 import java.awt.event.ActionListener
-import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import java.io.Serial
-import javax.swing.*
-import javax.swing.border.Border
-import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
+import javax.swing.ButtonGroup
+import javax.swing.JPanel
+import javax.swing.JRadioButton
+import javax.swing.ScrollPaneConstants
+import javax.swing.text.JTextComponent
 
 /**
  * Create by wuxingle on 2024/02/06
  * 定义了如何展示字节内容界面
  */
-class ByteAreaPanel : JPanel() {
+class ByteAreaPanel : JPanel(), InputValidate {
 
     // 上次的展示方式
     private var lastShowStyle: KeyShowStyle
@@ -40,9 +41,7 @@ class ByteAreaPanel : JPanel() {
 
     val textAreaSp: RTextScrollPane
 
-    private val normalBorder: Border
-
-    private val warnBorder: Border
+    val inputChecker: InputChecker
 
     // 当前展示方式
     val showStyle: KeyShowStyle
@@ -87,12 +86,26 @@ class ByteAreaPanel : JPanel() {
         textAreaSp = RTextScrollPane(textArea)
         textAreaSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
         textAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+        inputChecker = object : InputChecker(textArea, textAreaSp) {
+            override fun doCheck(component: JTextComponent): Boolean {
+                return try {
+                    data
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            override fun focusLost(e: FocusEvent) {
+                if (component.text.isNotBlank()) {
+                    check(false)
+                }
+            }
+        }
 
         layout = BorderLayout()
         add(headPanel, BorderLayout.NORTH)
         add(textAreaSp)
-        normalBorder = textAreaSp.border
-        warnBorder = BorderFactory.createLineBorder(Color.RED)
 
         initListener()
     }
@@ -109,11 +122,11 @@ class ByteAreaPanel : JPanel() {
             val bytes = try {
                 getData(lastShowStyle)
             } catch (e: Exception) {
-                showWarn()
+                inputChecker.showWarn()
                 setShowStyle(lastShowStyle)
                 return@ActionListener
             }
-            clearWarn()
+            inputChecker.showNormal()
 
             data = bytes
 
@@ -123,34 +136,6 @@ class ByteAreaPanel : JPanel() {
         stringRadio.addActionListener(itemListener)
         base64Radio.addActionListener(itemListener)
         hexRadio.addActionListener(itemListener)
-
-        // 文本清空时，取消红框
-        textArea.document.addDocumentListener(object : DocumentListener {
-            override fun insertUpdate(e: DocumentEvent) {
-                changedUpdate(e)
-            }
-
-            override fun removeUpdate(e: DocumentEvent) {
-                changedUpdate(e)
-            }
-
-            override fun changedUpdate(e: DocumentEvent) {
-                if (textArea.text.isBlank()) {
-                    clearWarn()
-                }
-            }
-        })
-
-        // 失去焦点时，校验key
-        textArea.addFocusListener(object : FocusAdapter() {
-            override fun focusLost(e: FocusEvent?) {
-                if (isDataLegal()) {
-                    clearWarn()
-                } else {
-                    showWarn()
-                }
-            }
-        })
     }
 
     /**
@@ -173,18 +158,6 @@ class ByteAreaPanel : JPanel() {
     }
 
     /**
-     * 内容是否合法
-     */
-    fun isDataLegal(): Boolean {
-        return try {
-            data
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
-    /**
      * 根据style获取字节内容
      */
     private fun getData(style: KeyShowStyle): ByteArray {
@@ -199,20 +172,9 @@ class ByteAreaPanel : JPanel() {
         }
     }
 
-    /**
-     * 输入校验失败，显示告警
-     */
-    private fun showWarn() {
-        textArea.requestFocus()
-        textAreaSp.border = warnBorder
-    }
+    override val component = textArea
 
-    /**
-     * 清除告警
-     */
-    private fun clearWarn() {
-        textAreaSp.border = normalBorder
-    }
+    override fun check(focus: Boolean) = inputChecker.check(focus)
 
     companion object {
         @Serial

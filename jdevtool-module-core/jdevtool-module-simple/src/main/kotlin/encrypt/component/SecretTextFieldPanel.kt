@@ -1,21 +1,26 @@
 package com.wxl.jdevtool.encrypt.component
 
+import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
-import com.wxl.jdevtool.Icons
+import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.encrypt.KeyShowStyle
 import com.wxl.jdevtool.encrypt.extension.*
 import com.wxl.jdevtool.extension.setHint
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import com.wxl.jdevtool.util.ClipboardUtils
-import java.awt.Color
+import com.wxl.jdevtool.validate.InputChecker
+import com.wxl.jdevtool.validate.InputValidate
 import java.awt.FlowLayout
-import java.awt.event.FocusAdapter
 import java.awt.event.FocusEvent
 import java.io.Serial
 import java.util.function.Function
-import javax.swing.*
-import javax.swing.border.Border
+import javax.swing.JButton
+import javax.swing.JPanel
+import javax.swing.JTextField
+import javax.swing.JToolBar
 import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
+import javax.swing.text.JTextComponent
 
 /**
  * Create by wuxingle on 2024/02/07
@@ -23,7 +28,7 @@ import javax.swing.event.DocumentListener
  */
 class SecretTextFieldPanel(
     private val keyGen: Function<KeyShowStyle, ByteArray>
-) : JPanel(FlowLayout(FlowLayout.LEFT)) {
+) : JPanel(FlowLayout(FlowLayout.LEFT)), InputValidate {
 
     private val keyFormatIconBase64Icon = FlatSVGIcon("icons/encrypt/keyformat_base64.svg")
     private val keyFormatIconHexIcon = FlatSVGIcon("icons/encrypt/keyformat_hex.svg")
@@ -31,10 +36,6 @@ class SecretTextFieldPanel(
 
     // 当前展示方式
     private var currentFormatIndex = 0
-
-    private val normalBorder: Border
-
-    private val warnBorder: Border
 
     val textField: JTextField
 
@@ -44,7 +45,7 @@ class SecretTextFieldPanel(
 
     val keyCopyBtn: JButton
 
-    val box: Box
+    val inputChecker: InputChecker
 
     // 密钥展示方式
     val keyShowStyle: KeyShowStyle
@@ -58,7 +59,7 @@ class SecretTextFieldPanel(
     // 密钥
     var key: ByteArray
         get() {
-            if (textField.text.isBlank() || textField.text == DEFAULT_HINT) {
+            if (textField.text.isBlank()) {
                 return byteArrayOf()
             }
             return when (keyShowStyle) {
@@ -77,13 +78,12 @@ class SecretTextFieldPanel(
 
     init {
         textField = JTextField(15)
-        textField.setHint(DEFAULT_HINT)
+        textField.setHint("输入密钥")
+
         keyFormatBtn = JButton()
         with(keyFormatBtn) {
             icon = keyFormatIconBase64Icon
-            background = textField.background
-            foreground = textField.foreground
-            border = BorderFactory.createEmptyBorder()
+            isContentAreaFilled = false
             toolTipText = "密钥BASE64方式展示"
         }
 
@@ -92,79 +92,54 @@ class SecretTextFieldPanel(
             icon = FlatSVGIcon("icons/encrypt/keygen.svg")
             rolloverIcon = FlatSVGIcon("icons/encrypt/keygenHover.svg")
             pressedIcon = FlatSVGIcon("icons/encrypt/keygenSelected.svg")
-            background = textField.background
-            foreground = textField.foreground
-            border = BorderFactory.createEmptyBorder()
+            isContentAreaFilled = false
             toolTipText = "随机生成密钥"
         }
 
-        keyCopyBtn = JButton()
+        keyCopyBtn = ComponentFactory.createCopyBtn()
         with(keyCopyBtn) {
-            icon = Icons.copyHover
-            rolloverIcon = Icons.copyPress
-            pressedIcon = Icons.copySelected
-            disabledIcon = Icons.copy
-
-            background = textField.background
-            foreground = textField.foreground
-            border = BorderFactory.createEmptyBorder()
             toolTipText = "复制到剪切板"
         }
 
-        normalBorder = textField.border
-        warnBorder = BorderFactory.createLineBorder(Color.RED)
+        val bar = JToolBar()
+        bar.add(keyFormatBtn)
+        bar.add(keyGenBtn)
+        bar.add(keyCopyBtn)
+        textField.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, bar)
 
-        box = Box.createHorizontalBox()
-        box.border = normalBorder
-        box.add(textField)
-        box.add(keyFormatBtn)
-        box.add(keyGenBtn)
-        box.add(keyCopyBtn)
+        inputChecker = object : InputChecker(textField) {
+            override fun doCheck(component: JTextComponent): Boolean {
+                return try {
+                    key
+                    true
+                } catch (e: Exception) {
+                    false
+                }
+            }
 
-        textField.border = BorderFactory.createEmptyBorder()
+            override fun focusLost(e: FocusEvent) {
+                if (component.text.isNotBlank()) {
+                    check(false)
+                }
+            }
+        }
 
-        add(box)
+
+        add(textField)
 
         initListener()
     }
 
     private fun initListener() {
-        // 文本清空时，取消红框
-        textField.document.addDocumentListener(object : DocumentListener {
-            override fun insertUpdate(e: DocumentEvent) {
-                changedUpdate(e)
-            }
-
-            override fun removeUpdate(e: DocumentEvent) {
-                changedUpdate(e)
-            }
-
-            override fun changedUpdate(e: DocumentEvent) {
-                if (textField.text.isBlank()) {
-                    clearWarn()
-                }
-            }
-        })
-        // 失去焦点时，校验key
-        textField.addFocusListener(object : FocusAdapter() {
-            override fun focusLost(e: FocusEvent?) {
-                if (isKeyLegal()) {
-                    clearWarn()
-                } else {
-                    showWarn()
-                }
-            }
-        })
-
         keyFormatBtn.addActionListener {
             // 获取key的字节
             val keyBytes = try {
                 key
             } catch (e: Exception) {
-                showWarn()
+                inputChecker.showWarn()
                 return@addActionListener
             }
-            clearWarn()
+            inputChecker.showNormal()
 
             currentFormatIndex++
             when (keyShowStyle) {
@@ -198,41 +173,18 @@ class SecretTextFieldPanel(
             val text = textField.text
             if (text.isNotBlank()) {
                 ClipboardUtils.setText(text)
+                Toasts.show(ToastType.SUCCESS, "复制成功")
             }
         }
     }
 
-    /**
-     * 输入校验失败，显示告警
-     */
-    private fun showWarn() {
-        textField.requestFocus()
-        box.border = warnBorder
-    }
+    override val component = textField
 
-    /**
-     * 取消告警
-     */
-    private fun clearWarn() {
-        box.border = normalBorder
-    }
-
-    /**
-     * 判断key格式是否合法
-     */
-    fun isKeyLegal(): Boolean {
-        return try {
-            key
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
+    override fun check(focus: Boolean) = inputChecker.check(focus)
 
     companion object {
         @Serial
         private const val serialVersionUID: Long = 8540804453102355409L
 
-        private const val DEFAULT_HINT = "输入密钥"
     }
 }

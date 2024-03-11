@@ -1,10 +1,12 @@
 package com.wxl.jdevtool.json
 
+import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.Icons
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.extension.setHint
+import com.wxl.jdevtool.validate.InputChecker
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import javax.swing.*
+import javax.swing.text.JTextComponent
 
 /**
  * Create by wuxingle on 2024/1/11
@@ -39,6 +42,8 @@ class JsonTabbedModule : TabbedModule {
 
     final val jsonPathField: JTextField
 
+    final val jsonPathChecker: InputChecker
+
     @ComponentId("headPanel")
     final val headPanel: JPanel
 
@@ -48,6 +53,8 @@ class JsonTabbedModule : TabbedModule {
     final val leftTextArea: RSyntaxTextArea
 
     final val leftSp: RTextScrollPane
+
+    final val leftInChecker: InputChecker
 
     @ComponentId("rightTextArea")
     final val rightTextArea: RSyntaxTextArea
@@ -63,12 +70,24 @@ class JsonTabbedModule : TabbedModule {
         compressBtn = JButton("压缩")
         getValBtn = JButton("求值")
         jsonPathField = JTextField(15)
+        jsonPathChecker = object : InputChecker(jsonPathField) {
+            override fun doCheck(component: JTextComponent): Boolean {
+                return !component.text.isNullOrBlank()
+            }
+        }
+
         jsonPathDescBtn = JButton(Icons.help)
 
         // 下方文本域
         textPanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         leftTextArea = RSyntaxTextArea()
+        leftTextArea.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
         leftSp = RTextScrollPane(leftTextArea)
+        leftInChecker = object : InputChecker(leftTextArea, leftSp) {
+            override fun doCheck(component: JTextComponent): Boolean {
+                return !component.text.isNullOrBlank()
+            }
+        }
         rightTextArea = RSyntaxTextArea()
         rightSp = RTextScrollPane(rightTextArea)
 
@@ -78,27 +97,18 @@ class JsonTabbedModule : TabbedModule {
     private fun initUI() {
         // 上方输入布局
         with(jsonPathDescBtn) {
-            background = jsonPathField.background
-            foreground = jsonPathField.foreground
-            border = BorderFactory.createEmptyBorder()
             toolTipText = "JsonPath说明"
-        }
-        val box = Box.createHorizontalBox()
-        with(box) {
-            border = jsonPathField.border
-            add(jsonPathField)
-            add(jsonPathDescBtn)
         }
         with(jsonPathField) {
             setHint("输入JsonPath")
-            border = BorderFactory.createEmptyBorder()
+            putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, jsonPathDescBtn)
         }
 
         with(headPanel) {
             layout = FlowLayout(FlowLayout.LEFT, 10, 10)
             border = BorderFactory.createTitledBorder("操作")
             add(JLabel("JsonPath:"))
-            add(box)
+            add(jsonPathField)
             add(getValBtn)
             add(expandBtn)
             add(compressBtn)
@@ -106,7 +116,6 @@ class JsonTabbedModule : TabbedModule {
 
         // 下方文本域
         with(leftTextArea) {
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
             isCodeFoldingEnabled = true
         }
         with(leftSp) {

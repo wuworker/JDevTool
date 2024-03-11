@@ -6,7 +6,9 @@ import com.jayway.jsonpath.Option
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.json.JsonTabbedModule
 import com.wxl.jdevtool.json.JsonUtils
-import com.wxl.jdevtool.message.MessageNotifier
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
+import com.wxl.jdevtool.validate.InputValidateGroup
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -17,8 +19,7 @@ import java.awt.event.ActionListener
  */
 @ComponentListener("jsonTabbedModule.getValBtn")
 class JsonValueGetActionListener(
-    @Autowired val jsonTabbedModule: JsonTabbedModule,
-    @Autowired val messageNotifier: MessageNotifier
+    @Autowired val jsonTabbedModule: JsonTabbedModule
 ) : ActionListener {
 
     private val conf = Configuration.defaultConfiguration()
@@ -27,15 +28,23 @@ class JsonValueGetActionListener(
         .addOptions(Option.SUPPRESS_EXCEPTIONS)
 
     override fun actionPerformed(e: ActionEvent?) {
+        if (!InputValidateGroup(jsonTabbedModule.leftInChecker, jsonTabbedModule.jsonPathChecker).check(true)) {
+            return
+        }
+
         val path = jsonTabbedModule.jsonPathField.text
         val json = jsonTabbedModule.leftTextArea.text
 
-        if (path.isBlank() || json.isBlank()) {
+        val dc = try {
+            JsonPath.using(conf).parse(json)
+        } catch (e: Exception) {
+            jsonTabbedModule.leftInChecker.showWarn()
+            Toasts.show(ToastType.ERROR, "Json格式错误:${e.message}")
             return
         }
 
         val resultText = try {
-            val result = JsonPath.using(conf).parse(json).read<List<String?>>(path)
+            val result = dc.read<List<String?>>(path)
             if (result.isEmpty() || (result.size == 1 && result[0] == null)) {
                 "null"
             } else {
@@ -43,9 +52,12 @@ class JsonValueGetActionListener(
                 JsonUtils.formatJson(result.toString())
             }
         } catch (e: Exception) {
-            messageNotifier.showMessage("输入内容格式错误")
-            ""
+            jsonTabbedModule.jsonPathChecker.showWarn()
+            Toasts.show(ToastType.ERROR, "JsonPath格式错误:${e.message}")
+            return
         }
+        jsonTabbedModule.leftInChecker.showNormal()
+        jsonTabbedModule.jsonPathChecker.showNormal()
 
         jsonTabbedModule.rightTextArea.text = resultText
         jsonTabbedModule.showRight()

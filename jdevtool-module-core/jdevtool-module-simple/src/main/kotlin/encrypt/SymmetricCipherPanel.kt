@@ -2,6 +2,8 @@ package com.wxl.jdevtool.encrypt
 
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.encrypt.component.ByteAreaPanel
+import com.wxl.jdevtool.validate.InputValidate
+import com.wxl.jdevtool.validate.InputValidateGroup
 import java.awt.BorderLayout
 import java.awt.FlowLayout
 import java.io.Serial
@@ -94,6 +96,32 @@ class SymmetricCipherPanel : JPanel() {
         layout = BorderLayout()
         add(panel1, BorderLayout.NORTH)
         add(splitPane)
+    }
+
+    fun checkEncode(): Boolean {
+        val checker = InputValidateGroup(ByteChecker(keyPanel), ByteChecker(enPanel))
+        return checker.check(true)
+    }
+
+    fun checkDecode(): Boolean {
+        val checker = InputValidateGroup(ByteChecker(keyPanel), ByteChecker(dePanel))
+        return checker.check(true)
+    }
+
+    private class ByteChecker(val panel: ByteAreaPanel) : InputValidate {
+
+        override val component = panel.component
+
+        override fun check(focus: Boolean): Boolean {
+            if (!panel.check(focus)) {
+                return false
+            }
+            if (panel.data.isEmpty()) {
+                panel.inputChecker.showWarn(focus)
+                return false
+            }
+            return true
+        }
     }
 
     companion object {

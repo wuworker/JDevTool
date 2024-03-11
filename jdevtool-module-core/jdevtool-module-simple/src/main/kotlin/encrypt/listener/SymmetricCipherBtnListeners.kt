@@ -4,6 +4,8 @@ import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.encrypt.*
 import com.wxl.jdevtool.encrypt.utils.CipherUtils
 import com.wxl.jdevtool.encrypt.utils.KeyGeneratorUtils
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -23,16 +25,20 @@ class SymmetricCipherKeyGenListener(
         // 算法
         val algorithm = symmetricCipherPanel.algorithmComboBox.selectedItem as SymmetricAlgorithm
 
-        val key: ByteArray = when (algorithm) {
-            SymmetricAlgorithm.AES -> {
-                val len = symmetricCipherPanel.keyLenComboBox.selectedItem as Int
-                KeyGeneratorUtils.generateAESKey(len)
+        try {
+            val key: ByteArray = when (algorithm) {
+                SymmetricAlgorithm.AES -> {
+                    val len = symmetricCipherPanel.keyLenComboBox.selectedItem as Int
+                    KeyGeneratorUtils.generateAESKey(len)
+                }
+
+                SymmetricAlgorithm.DES -> KeyGeneratorUtils.generateDESKey()
             }
 
-            SymmetricAlgorithm.DES -> KeyGeneratorUtils.generateDESKey()
+            symmetricCipherPanel.keyPanel.data = key
+        } catch (e: Exception) {
+            Toasts.show(ToastType.ERROR, "密钥生成失败:${e.message}")
         }
-
-        symmetricCipherPanel.keyPanel.data = key
     }
 }
 
@@ -43,23 +49,25 @@ class SymmetricCipherEncodeListener(
 
     override fun actionPerformed(e: ActionEvent) {
         val symmetricCipherPanel = encryptTabbedModule.symmetricCipherPanel
-        if (!symmetricCipherPanel.keyPanel.isDataLegal() || !symmetricCipherPanel.enPanel.isDataLegal()) {
+        symmetricCipherPanel.dePanel.inputChecker.showNormal()
+        if (!symmetricCipherPanel.checkEncode()) {
             return
         }
         val key = symmetricCipherPanel.keyPanel.data
         val source = symmetricCipherPanel.enPanel.data
-        if (key.isEmpty() || source.isEmpty()) {
-            return
-        }
-
         val algorithm = getSelectedAlgorithm(symmetricCipherPanel)
-        val encodeBytes = if (algorithm.startsWith("AES")) {
-            CipherUtils.doAESEncode(source, key, algorithm)
-        } else {
-            CipherUtils.doDESEncode(source, key, algorithm)
-        }
 
-        symmetricCipherPanel.dePanel.data = encodeBytes
+        try {
+            val encodeBytes = if (algorithm.startsWith("AES")) {
+                CipherUtils.doAESEncode(source, key, algorithm)
+            } else {
+                CipherUtils.doDESEncode(source, key, algorithm)
+            }
+
+            symmetricCipherPanel.dePanel.data = encodeBytes
+        } catch (e: Exception) {
+            Toasts.show(ToastType.ERROR, "加密失败:${e.message}")
+        }
     }
 }
 
@@ -70,23 +78,26 @@ class SymmetricCipherDecodeListener(
 
     override fun actionPerformed(e: ActionEvent) {
         val symmetricCipherPanel = encryptTabbedModule.symmetricCipherPanel
-        if (!symmetricCipherPanel.keyPanel.isDataLegal() || !symmetricCipherPanel.dePanel.isDataLegal()) {
+        symmetricCipherPanel.enPanel.inputChecker.showNormal()
+        if (!symmetricCipherPanel.checkDecode()) {
             return
         }
+
         val key = symmetricCipherPanel.keyPanel.data
         val source = symmetricCipherPanel.dePanel.data
-        if (key.isEmpty() || source.isEmpty()) {
-            return
-        }
-
         val algorithm = getSelectedAlgorithm(symmetricCipherPanel)
-        val decodeBytes = if (algorithm.startsWith("AES")) {
-            CipherUtils.doAESDecode(source, key, algorithm)
-        } else {
-            CipherUtils.doDESDecode(source, key, algorithm)
-        }
 
-        symmetricCipherPanel.enPanel.data = decodeBytes
+        try {
+            val decodeBytes = if (algorithm.startsWith("AES")) {
+                CipherUtils.doAESDecode(source, key, algorithm)
+            } else {
+                CipherUtils.doDESDecode(source, key, algorithm)
+            }
+
+            symmetricCipherPanel.enPanel.data = decodeBytes
+        } catch (e: Exception) {
+            Toasts.show(ToastType.ERROR, "解密失败:${e.message}")
+        }
     }
 }
 
