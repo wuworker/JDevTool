@@ -19,7 +19,7 @@ import javax.swing.event.ChangeListener
 @Component
 class JDevToolFrame(
     @Autowired tabbedProdiver: ObjectProvider<TabbedModule>,
-    @Autowired messageNotifierPanel: MessageNotifierPanel
+    @Autowired messageNotifierPanel: MessageBarPanel
 ) : JFrame() {
 
     private val log = KotlinLogging.logger {}

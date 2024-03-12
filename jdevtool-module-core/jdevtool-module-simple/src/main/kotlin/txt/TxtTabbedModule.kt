@@ -4,6 +4,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.component.LabelTextPanel
+import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
 import com.wxl.jdevtool.validate.InputValidateGroup
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
@@ -78,6 +79,8 @@ class TxtTabbedModule : TabbedModule {
     @ComponentId("rightTextArea")
     final val rightTextArea: RSyntaxTextArea
 
+    final val rightSp: RTextScrollPane
+
     init {
         mainPanel = JPanel()
 
@@ -121,6 +124,7 @@ class TxtTabbedModule : TabbedModule {
 
         // 右边输出
         rightTextArea = RSyntaxTextArea()
+        rightSp = RTextScrollPane(rightTextArea)
 
         // 布局初始化
         initUI()
@@ -165,21 +169,12 @@ class TxtTabbedModule : TabbedModule {
         }
 
         // 下方左边输入
-        with(leftTextArea) {
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            isCodeFoldingEnabled = true
-        }
-        leftSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-        leftSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        initTextArea(leftTextArea)
+        initScrollPane(leftSp)
 
         // 下方右边输出
-        with(rightTextArea) {
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            isCodeFoldingEnabled = true
-        }
-        val rightSp = RTextScrollPane(rightTextArea)
-        rightSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-        rightSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+        initTextArea(rightTextArea)
+        initScrollPane(rightSp)
 
         // 加入下方面板
         with(downPanel) {
@@ -201,6 +196,19 @@ class TxtTabbedModule : TabbedModule {
      */
     fun check(): Boolean {
         return InputValidateGroup(originSplitText, leftChecker).check(true)
+    }
+
+    private fun initTextArea(textArea: RSyntaxTextArea) {
+        with(textArea) {
+            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
+            isCodeFoldingEnabled = true
+            showCaretLocation()
+        }
+    }
+
+    private fun initScrollPane(scrollPane: RTextScrollPane) {
+        scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+        scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     }
 
     /**

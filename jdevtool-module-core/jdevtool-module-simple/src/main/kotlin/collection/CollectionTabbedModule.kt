@@ -4,6 +4,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.component.LabelTextPanel
+import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
 import com.wxl.jdevtool.validate.InputValidateGroup
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
@@ -175,16 +176,12 @@ class CollectionTabbedModule : TabbedModule {
         // 下方输入
         leftInputPanel1.add(leftTextAreaSp1)
         leftInputPanel2.add(leftTextAreaSp2)
-        with(leftPanel) {
-            leftTextArea1.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            leftTextArea1.isCodeFoldingEnabled = true
-            leftTextArea2.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            leftTextArea2.isCodeFoldingEnabled = true
-            leftTextAreaSp1.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-            leftTextAreaSp1.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
-            leftTextAreaSp2.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-            leftTextAreaSp2.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
 
+        initTextArea(leftTextArea1)
+        initScrollPane(leftTextAreaSp1)
+        initTextArea(leftTextArea2)
+        initScrollPane(leftTextAreaSp2)
+        with(leftPanel) {
             resizeWeight = 0.5
             leftComponent = leftInputPanel1
         }
@@ -193,14 +190,12 @@ class CollectionTabbedModule : TabbedModule {
         leftInputPanel1.border = BorderFactory.createTitledBorder("集合")
 
         // 下方输出
+        initTextArea(rightTextArea)
         with(rightPanel) {
             border = BorderFactory.createTitledBorder("输出")
 
-            rightTextArea.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            rightTextArea.isCodeFoldingEnabled = true
             val sp = RTextScrollPane(rightTextArea)
-            sp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-            sp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+            initScrollPane(sp)
             add(sp)
         }
 
@@ -228,6 +223,19 @@ class CollectionTabbedModule : TabbedModule {
             validate.add(leftChecker2)
         }
         return validate.check(true)
+    }
+
+    private fun initTextArea(textArea: RSyntaxTextArea) {
+        with(textArea) {
+            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
+            isCodeFoldingEnabled = true
+            showCaretLocation()
+        }
+    }
+
+    private fun initScrollPane(scrollPane: RTextScrollPane) {
+        scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+        scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     }
 
     override val title = "集合处理"

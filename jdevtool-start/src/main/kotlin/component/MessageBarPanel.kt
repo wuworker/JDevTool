@@ -1,6 +1,7 @@
 package com.wxl.jdevtool.component
 
-import com.wxl.jdevtool.message.MessageNotifier
+import com.wxl.jdevtool.message.MessageBar
+import com.wxl.jdevtool.message.MessageBarListener
 import org.springframework.stereotype.Component
 import java.awt.Font
 import java.awt.GridBagConstraints
@@ -16,7 +17,7 @@ import javax.swing.SwingConstants
  * 消息栏
  */
 @Component
-class MessageNotifierPanel : MessageNotifier {
+class MessageBarPanel {
 
     final val panel: JPanel
 
@@ -59,23 +60,23 @@ class MessageNotifierPanel : MessageNotifier {
 
         panel.add(msgLabel)
         panel.add(caretLabel)
+
+        initListener()
+    }
+
+    private fun initListener() {
+        MessageBar.addListener(object : MessageBarListener {
+            override fun showMouseCaret(text: String) {
+                caretLabel.text = text
+            }
+
+            override fun showMessage(text: String) {
+                msgLabel.text = text
+            }
+        })
     }
 
     private fun getGridBagConstraints(): GridBagConstraints {
         return GridBagConstraints()
-    }
-
-    /**
-     * 显示光标信息
-     */
-    override fun showMouseCaret(text: String) {
-        caretLabel.text = text
-    }
-
-    /**
-     * 显示底部消息
-     */
-    override fun showMessage(text: String) {
-        msgLabel.text = text
     }
 }

@@ -2,6 +2,7 @@ package com.wxl.jdevtool.encrypt.component
 
 import com.wxl.jdevtool.encrypt.KeyShowStyle
 import com.wxl.jdevtool.encrypt.extension.*
+import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
 import com.wxl.jdevtool.validate.InputValidate
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
@@ -83,6 +84,7 @@ class ByteAreaPanel : JPanel(), InputValidate {
 
         textArea = RSyntaxTextArea()
         textArea.lineWrap = true
+        textArea.showCaretLocation()
         textAreaSp = RTextScrollPane(textArea)
         textAreaSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
         textAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER

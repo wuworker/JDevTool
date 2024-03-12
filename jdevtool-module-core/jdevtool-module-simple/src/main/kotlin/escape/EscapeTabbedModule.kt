@@ -3,6 +3,7 @@ package com.wxl.jdevtool.escape
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
+import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
@@ -145,19 +146,11 @@ class EscapeTabbedModule : TabbedModule {
         rightPanel.border = BorderFactory.createTitledBorder("结果：")
         rightPanel.add(rightTextAreaSp)
 
+        initTextArea(leftTextArea)
+        initScrollPane(leftTextAreaSp)
+        initTextArea(rightTextArea)
+        initScrollPane(rightTextAreaSp)
         with(downPanel) {
-            leftTextArea.lineWrap = true
-            leftTextArea.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            leftTextArea.isCodeFoldingEnabled = true
-            leftTextAreaSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-            leftTextAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-
-            rightTextArea.lineWrap = true
-            rightTextArea.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            rightTextArea.isCodeFoldingEnabled = true
-            rightTextAreaSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-            rightTextAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
-
             resizeWeight = 0.5
             leftComponent = leftPanel
             rightComponent = rightPanel
@@ -167,6 +160,22 @@ class EscapeTabbedModule : TabbedModule {
             layout = BorderLayout()
             add(headPanel, BorderLayout.NORTH)
             add(downPanel)
+        }
+    }
+
+    private fun initTextArea(textArea: RSyntaxTextArea) {
+        with(textArea) {
+            lineWrap = true
+            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
+            isCodeFoldingEnabled = true
+            showCaretLocation()
+        }
+    }
+
+    private fun initScrollPane(scrollPane: RTextScrollPane) {
+        with(scrollPane) {
+            verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+            horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         }
     }
 

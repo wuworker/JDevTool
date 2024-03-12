@@ -6,6 +6,7 @@ import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.Icons
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.extension.setHint
+import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
@@ -117,6 +118,7 @@ class JsonTabbedModule : TabbedModule {
         // 下方文本域
         with(leftTextArea) {
             isCodeFoldingEnabled = true
+            showCaretLocation()
         }
         with(leftSp) {
             verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
@@ -125,6 +127,7 @@ class JsonTabbedModule : TabbedModule {
         with(rightTextArea) {
             syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
             isCodeFoldingEnabled = true
+            showCaretLocation()
         }
         with(rightSp) {
             verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED

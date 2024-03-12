@@ -1,10 +1,13 @@
 package com.wxl.jdevtool.message
 
+import java.util.*
+
+
 /**
- * Create by wuxingle on 2024/01/24
- * 底部消息通知
+ * Create by wuxingle on 2024/03/12
+ * 消息栏
  */
-interface MessageNotifier {
+interface MessageBarListener : EventListener {
 
     /**
      * 显示光标信息

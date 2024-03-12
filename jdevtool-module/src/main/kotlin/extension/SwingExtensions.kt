@@ -2,8 +2,10 @@ package com.wxl.jdevtool.extension
 
 import com.formdev.flatlaf.FlatClientProperties
 import com.wxl.jdevtool.listener.ClickRequestFocusMouseListener
+import com.wxl.jdevtool.listener.TextAreaCaretLocationShowListener
 import java.awt.Component
 import java.awt.Window
+import javax.swing.JTextArea
 import javax.swing.JTextField
 import javax.swing.text.JTextComponent
 
@@ -83,6 +85,13 @@ fun JTextField.setHint(hint: String) {
  */
 fun JTextField.showClear() {
     putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true)
+}
+
+/**
+ * 显示光标定位信息
+ */
+fun JTextArea.showCaretLocation() {
+    addCaretListener(TextAreaCaretLocationShowListener())
 }
 
 /**

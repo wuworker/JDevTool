@@ -6,9 +6,8 @@ import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.extension.*
-import com.wxl.jdevtool.message.MessageNotifier
+import com.wxl.jdevtool.message.MessageBar
 import com.wxl.jdevtool.validate.InputChecker
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
 import java.awt.Color
@@ -32,9 +31,7 @@ import javax.swing.text.JTextComponent
 @Order(300)
 @Component
 @ComponentId("timeTabbedModule")
-class TimeTabbedModule(
-    @Autowired val messageNotifier: MessageNotifier
-) : TabbedModule {
+class TimeTabbedModule : TabbedModule {
 
     private val dateTimeChineseFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd号 HH点mm分ss秒")
 
@@ -395,7 +392,7 @@ class TimeTabbedModule(
 
     override fun selectedChange(select: Boolean) {
         if (select) {
-            messageNotifier.showMouseCaret("")
+            MessageBar.showMouseCaret("")
             showCurrentTime()
             timer.start()
         } else {
