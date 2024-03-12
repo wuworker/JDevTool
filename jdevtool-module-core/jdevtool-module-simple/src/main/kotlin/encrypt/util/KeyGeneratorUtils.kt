@@ -1,5 +1,7 @@
 package com.wxl.jdevtool.encrypt.utils
 
+import java.security.KeyPair
+import java.security.KeyPairGenerator
 import javax.crypto.KeyGenerator
 
 /**
@@ -51,6 +53,15 @@ object KeyGeneratorUtils {
         return generateKey("DES")
     }
 
+
+    /**
+     * RSA密钥对
+     * 1024,2048
+     */
+    fun generateRSAKey(len: Int): KeyPair {
+        return generateKeyPair("RSA", len)
+    }
+
     /**
      * 产生key
      */
@@ -62,4 +73,14 @@ object KeyGeneratorUtils {
         val secretKey = keyGenerator.generateKey()
         return secretKey.encoded
     }
+
+    /**
+     * 产生密钥对
+     */
+    private fun generateKeyPair(algorithm: String, len: Int): KeyPair {
+        val keyPairGenerator = KeyPairGenerator.getInstance(algorithm)
+        keyPairGenerator.initialize(len)
+        return keyPairGenerator.generateKeyPair()
+    }
+
 }

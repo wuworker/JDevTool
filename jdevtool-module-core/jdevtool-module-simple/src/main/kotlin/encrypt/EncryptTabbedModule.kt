@@ -28,14 +28,19 @@ class EncryptTabbedModule : TabbedModule {
     @ComponentId("symmetricCipherPanel")
     final val symmetricCipherPanel: SymmetricCipherPanel
 
+    @ComponentId("asymmetricCipherPanel")
+    final val asymmetricCipherPanel: AsymmetricCipherPanel
+
     init {
         mainPanel = JPanel(BorderLayout())
         tabbedPane = JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT)
         digestPanel = DigestPanel()
         symmetricCipherPanel = SymmetricCipherPanel()
+        asymmetricCipherPanel = AsymmetricCipherPanel()
 
         tabbedPane.addTab("消息摘要", null, digestPanel, "消息摘要")
         tabbedPane.addTab("对称加密", null, symmetricCipherPanel, "对称加密")
+        tabbedPane.addTab("非对称加密", null, asymmetricCipherPanel, "非对称加密")
 
         mainPanel.add(tabbedPane)
     }

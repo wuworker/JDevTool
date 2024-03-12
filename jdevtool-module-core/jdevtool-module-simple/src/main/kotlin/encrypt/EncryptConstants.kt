@@ -79,3 +79,10 @@ enum class AlgorithmPadding(
         return padding
     }
 }
+
+/**
+ * 非对称加密算法
+ */
+enum class ASymmetricAlgorithm {
+    RSA
+}

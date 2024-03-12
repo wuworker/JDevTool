@@ -1,6 +1,9 @@
 package com.wxl.jdevtool.encrypt.utils
 
 import java.security.Key
+import java.security.KeyFactory
+import java.security.spec.PKCS8EncodedKeySpec
+import java.security.spec.X509EncodedKeySpec
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
@@ -41,6 +44,46 @@ object CipherUtils {
     fun doDESDecode(source: ByteArray, key: ByteArray, algorithm: String = "DES/ECB/PKCS5Padding"): ByteArray {
         val secretKey: SecretKey = SecretKeySpec(key, "DES")
         return decodeFromCipher(source, secretKey, algorithm)
+    }
+
+    /**
+     * RSA私钥加密
+     */
+    fun doRSAPrivateKeyEncode(source: ByteArray, key: ByteArray): ByteArray {
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val pkcs8EncodedKeySpec = PKCS8EncodedKeySpec(key)
+        val privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec)
+        return encodeFromCipher(source, privateKey, "RSA")
+    }
+
+    /**
+     * RSA私钥解密
+     */
+    fun doRSAPrivateKeyDecode(source: ByteArray, key: ByteArray): ByteArray {
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val pkcs8EncodedKeySpec = PKCS8EncodedKeySpec(key)
+        val privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec)
+        return decodeFromCipher(source, privateKey, "RSA")
+    }
+
+    /**
+     * RSA公钥加密
+     */
+    fun doRSAPublicKeyEncode(source: ByteArray, key: ByteArray): ByteArray {
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val x509EncodedKeySpec = X509EncodedKeySpec(key)
+        val publicKey = keyFactory.generatePublic(x509EncodedKeySpec)
+        return encodeFromCipher(source, publicKey, "RSA")
+    }
+
+    /**
+     * RSA公钥解密
+     */
+    fun doRSAPublicKeyDecode(source: ByteArray, key: ByteArray): ByteArray {
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val x509EncodedKeySpec = X509EncodedKeySpec(key)
+        val publicKey = keyFactory.generatePublic(x509EncodedKeySpec)
+        return decodeFromCipher(source, publicKey, "RSA")
     }
 
     /**

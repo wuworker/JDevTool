@@ -1,8 +1,13 @@
 package com.wxl.jdevtool.encrypt.component
 
+import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.encrypt.KeyShowStyle
 import com.wxl.jdevtool.encrypt.extension.*
 import com.wxl.jdevtool.extension.showCaretLocation
+import com.wxl.jdevtool.listener.FlowResizeComponentListener
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
+import com.wxl.jdevtool.util.ClipboardUtils
 import com.wxl.jdevtool.validate.InputChecker
 import com.wxl.jdevtool.validate.InputValidate
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
@@ -113,6 +118,8 @@ class ByteAreaPanel : JPanel(), InputValidate {
     }
 
     private fun initListener() {
+        headPanel.addComponentListener(FlowResizeComponentListener())
+
         val itemListener = ActionListener {
             // 当前选中的
             val showStyle = KeyShowStyle.valueOf(radioGroup.selection.actionCommand)
@@ -145,6 +152,21 @@ class ByteAreaPanel : JPanel(), InputValidate {
      */
     fun addCustom(c: Component) {
         headPanel.add(c)
+    }
+
+    /**
+     * 增加复制按钮
+     */
+    fun addCopyBtn() {
+        val copyBtn = ComponentFactory.createCopyBtn()
+        copyBtn.addActionListener {
+            val text = textArea.text
+            if (text.isNotBlank()) {
+                ClipboardUtils.setText(text)
+                Toasts.show(ToastType.SUCCESS, "复制成功")
+            }
+        }
+        headPanel.add(copyBtn)
     }
 
     /**

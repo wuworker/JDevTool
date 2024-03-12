@@ -25,5 +25,9 @@ class EncryptTabbedModuleThemeListener(
         textAreaTheme.apply(encryptTabbedModule.symmetricCipherPanel.keyPanel.textArea)
         textAreaTheme.apply(encryptTabbedModule.symmetricCipherPanel.enPanel.textArea)
         textAreaTheme.apply(encryptTabbedModule.symmetricCipherPanel.dePanel.textArea)
+        textAreaTheme.apply(encryptTabbedModule.asymmetricCipherPanel.publicKeyPanel.textArea)
+        textAreaTheme.apply(encryptTabbedModule.asymmetricCipherPanel.privateKeyPanel.textArea)
+        textAreaTheme.apply(encryptTabbedModule.asymmetricCipherPanel.enPanel.textArea)
+        textAreaTheme.apply(encryptTabbedModule.asymmetricCipherPanel.dePanel.textArea)
     }
 }

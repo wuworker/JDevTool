@@ -2,7 +2,7 @@ package com.wxl.jdevtool.encrypt
 
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.encrypt.component.ByteAreaPanel
-import com.wxl.jdevtool.validate.InputValidate
+import com.wxl.jdevtool.encrypt.component.ByteAreaPanelChecker
 import com.wxl.jdevtool.validate.InputValidateGroup
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -75,6 +75,7 @@ class SymmetricCipherPanel : JPanel() {
             border = BorderFactory.createTitledBorder("密钥")
             textArea.rows = 3
             setShowStyle(KeyShowStyle.BASE64)
+            addCopyBtn()
             addCustom(keyGenBtn)
             addCustom(keyLenLabel)
             addCustom(keyLenComboBox)
@@ -83,8 +84,10 @@ class SymmetricCipherPanel : JPanel() {
         panel1.add(keyPanel, BorderLayout.SOUTH)
 
         enPanel.border = BorderFactory.createTitledBorder("原文")
+        enPanel.addCopyBtn()
         enPanel.addCustom(enBtn)
         dePanel.border = BorderFactory.createTitledBorder("密文")
+        dePanel.addCopyBtn()
         dePanel.setShowStyle(KeyShowStyle.BASE64)
         dePanel.addCustom(deBtn)
         with(splitPane) {
@@ -99,29 +102,13 @@ class SymmetricCipherPanel : JPanel() {
     }
 
     fun checkEncode(): Boolean {
-        val checker = InputValidateGroup(ByteChecker(keyPanel), ByteChecker(enPanel))
+        val checker = InputValidateGroup(ByteAreaPanelChecker(keyPanel), ByteAreaPanelChecker(enPanel))
         return checker.check(true)
     }
 
     fun checkDecode(): Boolean {
-        val checker = InputValidateGroup(ByteChecker(keyPanel), ByteChecker(dePanel))
+        val checker = InputValidateGroup(ByteAreaPanelChecker(keyPanel), ByteAreaPanelChecker(dePanel))
         return checker.check(true)
-    }
-
-    private class ByteChecker(val panel: ByteAreaPanel) : InputValidate {
-
-        override val component = panel.component
-
-        override fun check(focus: Boolean): Boolean {
-            if (!panel.check(focus)) {
-                return false
-            }
-            if (panel.data.isEmpty()) {
-                panel.inputChecker.showWarn(focus)
-                return false
-            }
-            return true
-        }
     }
 
     companion object {

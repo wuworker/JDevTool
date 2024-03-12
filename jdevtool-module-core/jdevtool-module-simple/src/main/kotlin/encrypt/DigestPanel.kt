@@ -75,8 +75,10 @@ class DigestPanel : JPanel() {
 
         inByteArea.setShowStyle(KeyShowStyle.STRING)
         inByteArea.border = BorderFactory.createTitledBorder("输入")
+        inByteArea.addCopyBtn()
         outByteArea.setShowStyle(KeyShowStyle.BASE64)
         outByteArea.border = BorderFactory.createTitledBorder("结果")
+        outByteArea.addCopyBtn()
         with(downPanel) {
             resizeWeight = 0.5
             leftComponent = inByteArea
