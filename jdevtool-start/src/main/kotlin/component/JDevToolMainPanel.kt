@@ -3,12 +3,15 @@ package com.wxl.jdevtool.component
 import com.formdev.flatlaf.FlatClientProperties
 import com.wxl.jdevtool.TabbedModule
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.ObjectProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import java.awt.BorderLayout
 import java.io.Serial
-import javax.swing.*
+import javax.swing.BorderFactory
+import javax.swing.JPanel
+import javax.swing.JTabbedPane
 import javax.swing.event.ChangeEvent
 import javax.swing.event.ChangeListener
 
@@ -17,22 +20,24 @@ import javax.swing.event.ChangeListener
  * 主框架
  */
 @Component
-class JDevToolFrame(
-    @Autowired tabbedProdiver: ObjectProvider<TabbedModule>,
-    @Autowired messageNotifierPanel: MessageBarPanel
-) : JFrame() {
+class JDevToolMainPanel(
+    @Autowired tabbedProvider: ObjectProvider<TabbedModule>,
+    @Autowired private val messageNotifierPanel: MessageBarPanel
+) : JPanel(BorderLayout()), InitializingBean {
 
     private val log = KotlinLogging.logger {}
 
+    private val tabbedPane: JTabbedPane
+
     init {
-        val tabbedPane = JTabbedPane(JTabbedPane.LEFT, JTabbedPane.WRAP_TAB_LAYOUT)
+        tabbedPane = JTabbedPane(JTabbedPane.LEFT, JTabbedPane.WRAP_TAB_LAYOUT)
         tabbedPane.putClientProperty(
             FlatClientProperties.TABBED_PANE_TAB_ALIGNMENT,
             FlatClientProperties.TABBED_PANE_ALIGN_LEADING
         )
 
         // 需要加载的模块
-        val tabbedModules = tabbedProdiver.orderedStream().toList()
+        val tabbedModules = tabbedProvider.orderedStream().toList()
         if (tabbedModules.isNotEmpty()) {
             for (module in tabbedModules) {
                 log.info { "load module: ${module.title}" }
@@ -55,18 +60,11 @@ class JDevToolFrame(
             })
             tabbedModules[0].selectedChange(true)
         }
+    }
 
-        // 底部消息组件
-        val bottomPanel = messageNotifierPanel.panel
-
-        val mainPanel = JPanel(BorderLayout())
-        mainPanel.add(tabbedPane)
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH)
-
-        layout = BorderLayout()
-        contentPane = mainPanel
-        title = "JDevTool"
-        defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+    override fun afterPropertiesSet() {
+        add(tabbedPane)
+        add(messageNotifierPanel.panel, BorderLayout.SOUTH)
     }
 
     companion object {

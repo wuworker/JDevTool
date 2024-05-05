@@ -2,6 +2,7 @@ package com.wxl.jdevtool.component
 
 import com.wxl.jdevtool.Icons
 import javax.swing.JButton
+import javax.swing.UIManager
 
 /**
  * Create by wuxingle on 2024/02/05
@@ -24,5 +25,17 @@ object ComponentFactory {
         return btn
     }
 
+    /**
+     * 执行按钮
+     */
+    fun createExecuteBtn(): JButton {
+        val btn = JButton(Icons.execute)
+        with(btn) {
+            icon = Icons.execute
+            isBorderPainted = false
+            background = UIManager.getColor("window")
+        }
+        return btn
+    }
 
 }

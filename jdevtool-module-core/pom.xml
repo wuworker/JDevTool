@@ -14,6 +14,7 @@
     <modules>
         <module>jdevtool-module-simple</module>
         <module>jdevtool-module-json</module>
+        <module>jdevtool-module-dubbo</module>
     </modules>
 
     <dependencies>

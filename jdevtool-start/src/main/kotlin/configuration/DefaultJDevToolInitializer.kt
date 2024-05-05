@@ -2,8 +2,8 @@ package com.wxl.jdevtool.configuration
 
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.ComponentListener
+import com.wxl.jdevtool.JDevlToolContexts
 import com.wxl.jdevtool.theme.AppThemeListener
-import com.wxl.jdevtool.theme.AppThemeManager
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.BeanCreationException
 import org.springframework.context.ApplicationContext
@@ -26,7 +26,7 @@ import javax.swing.text.JTextComponent
  * JDevlTool启动流程
  */
 @Component
-class DefaultJDevToolStartupProcess : JDevToolStartupProcess {
+class DefaultJDevToolInitializer : JDevToolInitializer {
 
     private val log = KotlinLogging.logger { }
 
@@ -148,7 +148,7 @@ class DefaultJDevToolStartupProcess : JDevToolStartupProcess {
      * 初始化主题
      */
     override fun initTheme(context: ApplicationContext) {
-        val appTheme = AppThemeManager.theme!!
+        val appTheme = JDevlToolContexts.theme
         val themeListeners = context.getBeanProvider(AppThemeListener::class.java).orderedStream().toList()
         for (themeListener in themeListeners) {
             themeListener.themeChange(appTheme)

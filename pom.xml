@@ -31,6 +31,8 @@
         <flatlaf.version>3.2.5</flatlaf.version>
         <rsyntaxtextarea.version>3.3.4</rsyntaxtextarea.version>
         <commons-text.version>1.11.0</commons-text.version>
+        <dubbo.version>2.7.5</dubbo.version>
+        <curator.version>2.12.0</curator.version>
     </properties>
 
     <dependencies>
@@ -107,6 +109,18 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
                 <version>${commons-text.version}</version>
+            </dependency>
+
+            <!-- dubbo,zk -->
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.curator</groupId>
+                <artifactId>curator-recipes</artifactId>
+                <version>${curator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

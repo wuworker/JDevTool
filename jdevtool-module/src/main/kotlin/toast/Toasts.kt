@@ -12,7 +12,7 @@ object Toasts {
 
     private val notifications = Notifications()
 
-    fun setFrame(frame: JFrame) {
+    fun setMainFrame(frame: JFrame) {
         notifications.setFrame(frame)
     }
 

@@ -1,16 +1,13 @@
 package com.wxl.jdevtool
 
+import com.formdev.flatlaf.FlatLaf
 import com.formdev.flatlaf.themes.FlatMacDarkLaf
-import com.wxl.jdevtool.component.JDevToolFrame
-import com.wxl.jdevtool.configuration.DefaultJDevToolStartupProcess
 import com.wxl.jdevtool.theme.AppTheme
-import com.wxl.jdevtool.theme.AppThemeManager
-import com.wxl.jdevtool.toast.ToastType
 import com.wxl.jdevtool.toast.Toasts
 import org.fife.ui.rsyntaxtextarea.Theme
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
-import javax.swing.JTextField
+import javax.swing.JFrame
 
 /**
  * Create by wuxingle on 2024/01/02
@@ -21,18 +18,25 @@ class JDevToolApplication
 
 fun main(args: Array<String>) {
     // 主题设置
-    FlatMacDarkLaf.setup()
+    // 加载flat
+    FlatLaf.registerCustomDefaultsSource("themes")
+    val lookAndFeel = FlatMacDarkLaf()
+    FlatLaf.setup(lookAndFeel)
+
+    // 加载rsyntax text area
     val textAreaTheme =
-        Theme.load(DefaultJDevToolStartupProcess::class.java.getResourceAsStream("/themes/rsyntax_dark.xml"))
-    val appTheme = AppTheme(textAreaTheme)
-    AppThemeManager.theme = appTheme
+        Theme.load(JDevToolApplication::class.java.getResourceAsStream("/themes/rsyntax_dark.xml"))
+    val appTheme = AppTheme(lookAndFeel, textAreaTheme)
 
-    val context = SpringApplicationBuilder(JDevToolApplication::class.java).headless(false)
-        .run(*args)
+    JDevlToolContexts.theme = appTheme
 
-    val jdevToolFrame = context.getBean(JDevToolFrame::class.java)
-    Toasts.setFrame(jdevToolFrame)
+    // 主frame
+    val frame = JFrame()
+    JDevlToolContexts.mainFrame = frame
 
-    jdevToolFrame.setSize(800, 800)
-    jdevToolFrame.isVisible = true
+    // init组件
+    Toasts.setMainFrame(frame)
+
+    // 启动spring
+    SpringApplicationBuilder(JDevToolApplication::class.java).headless(false).run(*args)
 }

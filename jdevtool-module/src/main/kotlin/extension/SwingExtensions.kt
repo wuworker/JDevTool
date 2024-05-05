@@ -1,8 +1,12 @@
 package com.wxl.jdevtool.extension
 
 import com.formdev.flatlaf.FlatClientProperties
+import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.listener.ClickRequestFocusMouseListener
 import com.wxl.jdevtool.listener.TextAreaCaretLocationShowListener
+import com.wxl.jdevtool.toast.ToastType
+import com.wxl.jdevtool.toast.Toasts
+import com.wxl.jdevtool.util.ClipboardUtils
 import java.awt.Component
 import java.awt.Window
 import javax.swing.JTextArea
@@ -85,6 +89,20 @@ fun JTextField.setHint(hint: String) {
  */
 fun JTextField.showClear() {
     putClientProperty(FlatClientProperties.TEXT_FIELD_SHOW_CLEAR_BUTTON, true)
+}
+
+/**
+ * 显示复制按钮
+ */
+fun JTextField.showCopy() {
+    val copyBtn = ComponentFactory.createCopyBtn()
+    copyBtn.addActionListener {
+        if (text.isNotBlank()) {
+            ClipboardUtils.setText(text)
+            Toasts.show(ToastType.SUCCESS, "复制成功")
+        }
+    }
+    putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, copyBtn)
 }
 
 /**

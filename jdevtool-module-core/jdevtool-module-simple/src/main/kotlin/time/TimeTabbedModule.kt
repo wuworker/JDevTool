@@ -1,10 +1,8 @@
 package com.wxl.jdevtool.time
 
-import com.formdev.flatlaf.FlatClientProperties
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
-import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.extension.*
 import com.wxl.jdevtool.message.MessageBar
 import com.wxl.jdevtool.validate.InputChecker
@@ -44,13 +42,7 @@ class TimeTabbedModule : TabbedModule {
 
     final val nowTimeText: JTextField
 
-    @ComponentId("nowTimeCopyBtn")
-    final val nowTimeCopyBtn: JButton
-
     final val nowStampText: JTextField
-
-    @ComponentId("nowStampCopyBtn")
-    final val nowStampCopyBtn: JButton
 
     // 时间戳转换
     final val stamp2TimeInText: JTextField
@@ -62,9 +54,6 @@ class TimeTabbedModule : TabbedModule {
 
     final val stamp2TimeOutText: JTextField
 
-    @ComponentId("stamp2TimeCopyBtn")
-    final val stamp2TimeCopyBtn: JButton
-
     final val time2StampInText: JTextField
 
     final val time2StampInChecker: InputChecker
@@ -73,9 +62,6 @@ class TimeTabbedModule : TabbedModule {
     final val time2StampConvertBtn: JButton
 
     final val time2StampOutText: JTextField
-
-    @ComponentId("time2StampCopyBtn")
-    final val time2StampCopyBtn: JButton
 
     // 日期计算
     @ComponentId("dateCalculateInText")
@@ -163,24 +149,20 @@ class TimeTabbedModule : TabbedModule {
 
         // 当前时间
         nowTimeText = JTextField(20)
-        nowTimeCopyBtn = ComponentFactory.createCopyBtn()
 
         nowStampText = JTextField(20)
-        nowStampCopyBtn = ComponentFactory.createCopyBtn()
 
         // 时间转换
         stamp2TimeInText = createJTextField(20, TextInputType.NUMBER)
         stamp2TimeInChecker = NotBlankInputChecker(stamp2TimeInText)
         stamp2TimeConvertBtn = JButton("转换")
         stamp2TimeOutText = createJTextField(20, null)
-        stamp2TimeCopyBtn = ComponentFactory.createCopyBtn()
 
         time2StampInText = createJTextField(20, TextInputType.DATETIME)
         time2StampInChecker = NotBlankInputChecker(time2StampInText)
 
         time2StampConvertBtn = JButton("转换")
         time2StampOutText = createJTextField(20, null)
-        time2StampCopyBtn = ComponentFactory.createCopyBtn()
 
         // 日期计算
         dateCalculateInText = createJTextField(10, TextInputType.DATE)
@@ -256,7 +238,7 @@ class TimeTabbedModule : TabbedModule {
 
         val nowTimePanel = JPanel(FlowLayout(FlowLayout.LEFT))
         nowTimeText.isEditable = false
-        nowTimeText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, nowTimeCopyBtn)
+        nowTimeText.showCopy()
         with(nowTimePanel) {
             add(JLabel("现在的当地时间："))
             add(nowTimeText)
@@ -264,7 +246,7 @@ class TimeTabbedModule : TabbedModule {
 
         val nowStampPanel = JPanel(FlowLayout(FlowLayout.LEFT))
         nowStampText.isEditable = false
-        nowStampText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, nowStampCopyBtn)
+        nowStampText.showCopy()
 
         with(nowStampPanel) {
             add(JLabel("现在的时间戳："))
@@ -282,7 +264,7 @@ class TimeTabbedModule : TabbedModule {
             add(stamp2TimeConvertBtn)
             add(stamp2TimeOutText)
         }
-        stamp2TimeOutText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, stamp2TimeCopyBtn)
+        stamp2TimeOutText.showCopy()
 
         val time2StampPanel = JPanel(FlowLayout(FlowLayout.LEFT))
         time2StampInText.setHint(DateTimeFormatters.formatDateTime(LocalDateTime.now()))
@@ -291,7 +273,7 @@ class TimeTabbedModule : TabbedModule {
             add(time2StampConvertBtn)
             add(time2StampOutText)
         }
-        time2StampOutText.putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, time2StampCopyBtn)
+        time2StampOutText.showCopy()
 
         // 日期计算
         val dateCalculateTitlePanel = JPanel(FlowLayout(FlowLayout.LEFT))
