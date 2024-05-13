@@ -1,6 +1,6 @@
 package com.wxl.jdevtool.configuration
 
-import com.wxl.jdevtool.JDevlToolContexts
+import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.component.JDevToolMainPanel
 import org.springframework.boot.ConfigurableBootstrapContext
 import org.springframework.boot.SpringApplicationRunListener
@@ -24,7 +24,7 @@ class JDevToolApplicationRunListener : SpringApplicationRunListener {
         bootstrapContext: ConfigurableBootstrapContext,
         environment: ConfigurableEnvironment
     ) {
-
+        AppContexts.environment = environment
     }
 
     override fun contextPrepared(context: ConfigurableApplicationContext) {
@@ -39,6 +39,8 @@ class JDevToolApplicationRunListener : SpringApplicationRunListener {
      * 启动，已经刷新完毕
      */
     override fun started(context: ConfigurableApplicationContext, timeTaken: Duration) {
+        AppContexts.context = context
+
         context.getBean(JDevToolInitializer::class.java).init(context)
     }
 
@@ -47,7 +49,7 @@ class JDevToolApplicationRunListener : SpringApplicationRunListener {
      */
     override fun ready(context: ConfigurableApplicationContext, timeTaken: Duration) {
         val mainPanel = context.getBean(JDevToolMainPanel::class.java)
-        val frame = JDevlToolContexts.mainFrame
+        val frame = AppContexts.mainFrame
         with(frame) {
             layout = BorderLayout()
             contentPane = mainPanel

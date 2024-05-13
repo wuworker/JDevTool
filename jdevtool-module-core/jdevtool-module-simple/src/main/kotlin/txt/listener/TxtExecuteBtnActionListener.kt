@@ -1,6 +1,7 @@
 package com.wxl.jdevtool.txt.listener
 
 import com.wxl.jdevtool.ComponentListener
+import com.wxl.jdevtool.extension.getUnescapeText
 import com.wxl.jdevtool.txt.TxtTabbedModule
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,25 +27,35 @@ class TxtExecuteBtnActionListener(
         }
 
         // 去掉前缀，后缀
-        input = trimPrePost(input, txtTabbedModule.originPreText.text, txtTabbedModule.originPostText.text)
+        input = trimPrePost(
+            input,
+            txtTabbedModule.originPreText.getUnescapeText(),
+            txtTabbedModule.originPostText.getUnescapeText()
+        )
 
         // 按分隔符分割，去掉每项前后缀
-        val list = if (txtTabbedModule.originSplitText.text.isEmpty()) {
-            listOf(input)
-        } else {
-            input.split(txtTabbedModule.originSplitText.text)
-        }.filter { it.isNotBlank() }.map {
-            trimPrePost(it, txtTabbedModule.originItemPreText.text, txtTabbedModule.originItemPostText.text)
+        var splitTxt = txtTabbedModule.originSplitText.getUnescapeText()
+        if (splitTxt.isEmpty()) {
+            splitTxt = "\n"
         }
+        val list = input.split(splitTxt)
+            .filter { it.isNotBlank() }
+            .map {
+                trimPrePost(
+                    it,
+                    txtTabbedModule.originItemPreText.getUnescapeText(),
+                    txtTabbedModule.originItemPostText.getUnescapeText()
+                )
+            }
         log.debug { "input to list :$list" }
 
         // 按输出组装
         val output = list.joinToString(
-            txtTabbedModule.targetSplitText.text,
-            txtTabbedModule.targetPreText.text,
-            txtTabbedModule.targetPostText.text
+            txtTabbedModule.targetSplitText.getUnescapeText(),
+            txtTabbedModule.targetPreText.getUnescapeText(),
+            txtTabbedModule.targetPostText.getUnescapeText()
         ) {
-            "${txtTabbedModule.targetItemPreText.text}$it${txtTabbedModule.targetItemPostText.text}"
+            "${txtTabbedModule.targetItemPreText.getUnescapeText()}$it${txtTabbedModule.targetItemPostText.getUnescapeText()}"
         }
 
         log.debug { "output is :$output" }

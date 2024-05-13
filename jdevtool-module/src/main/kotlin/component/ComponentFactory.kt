@@ -1,6 +1,8 @@
 package com.wxl.jdevtool.component
 
+import com.formdev.flatlaf.FlatClientProperties
 import com.wxl.jdevtool.Icons
+import java.awt.Cursor
 import javax.swing.JButton
 import javax.swing.UIManager
 
@@ -38,4 +40,15 @@ object ComponentFactory {
         return btn
     }
 
+    /**
+     * 清空按钮
+     */
+    fun createClearBtn(): JButton {
+        val button = JButton()
+        button.name = "TextField.clearButton"
+        button.putClientProperty(FlatClientProperties.STYLE_CLASS, "clearButton")
+        button.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_TOOLBAR_BUTTON)
+        button.cursor = Cursor.getDefaultCursor()
+        return button
+    }
 }

@@ -17,11 +17,11 @@ class TxtOriginClearBtnActionListener(
 
     override fun actionPerformed(e: ActionEvent?) {
         with(txtTabbedModule) {
-            originSplitText.clearText()
-            originItemPreText.clearText()
-            originItemPostText.clearText()
-            originPreText.clearText()
-            originPostText.clearText()
+            originSplitText.text = ""
+            originItemPreText.text = ""
+            originItemPostText.text = ""
+            originPreText.text = ""
+            originPostText.text = ""
         }
     }
 }
@@ -33,11 +33,11 @@ class TxtTargetClearBtnActionListener(
 
     override fun actionPerformed(e: ActionEvent?) {
         with(txtTabbedModule) {
-            targetSplitText.clearText()
-            targetItemPreText.clearText()
-            targetItemPostText.clearText()
-            targetPreText.clearText()
-            targetPostText.clearText()
+            targetSplitText.text = ""
+            targetItemPreText.text = ""
+            targetItemPostText.text = ""
+            targetPreText.text = ""
+            targetPostText.text = ""
         }
     }
 }

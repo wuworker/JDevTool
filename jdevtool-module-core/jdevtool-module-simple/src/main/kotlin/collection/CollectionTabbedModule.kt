@@ -3,7 +3,9 @@ package  com.wxl.jdevtool.collection
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
-import com.wxl.jdevtool.component.LabelTextPanel
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
+import com.wxl.jdevtool.extension.setHint
 import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
 import com.wxl.jdevtool.validate.InputValidateGroup
@@ -32,7 +34,9 @@ class CollectionTabbedModule : TabbedModule {
     @ComponentId("headPanel")
     final val headPanel: JPanel
 
-    final val splitLabel: LabelTextPanel
+    final val splitLabel: JLabel
+
+    final val splitTextField: JTextField
 
     @ComponentId("deduplicateRadio")
     final val deduplicateRadio: JRadioButton
@@ -89,7 +93,8 @@ class CollectionTabbedModule : TabbedModule {
 
         // 上方控制布局
         headPanel = JPanel()
-        splitLabel = LabelTextPanel("分隔符")
+        splitLabel = JLabel("分隔符:")
+        splitTextField = HistoryTextField(StorageHistoryList("collection.split"))
         deduplicateRadio = JRadioButton("去重")
         repeatRadio = JRadioButton("重复元素")
         unionRadio = JRadioButton("并集")
@@ -158,12 +163,13 @@ class CollectionTabbedModule : TabbedModule {
             add(diff2Radio)
         }
 
-        splitLabel.setNewLine()
+        splitTextField.setHint("\\n")
         with(headPanel) {
             layout = FlowLayout(FlowLayout.LEFT, 10, 10)
             border = BorderFactory.createTitledBorder("执行选项")
 
             add(splitLabel)
+            add(splitTextField)
             add(deduplicateRadio)
             add(repeatRadio)
             add(unionRadio)
@@ -217,7 +223,7 @@ class CollectionTabbedModule : TabbedModule {
     }
 
     fun check(): Boolean {
-        val validate = InputValidateGroup(splitLabel, leftChecker1)
+        val validate = InputValidateGroup(leftChecker1)
         val selectedOp = getSelectedOp()
         if (CollectionOps.DEDUPLICATE != selectedOp && CollectionOps.REPEAT != selectedOp) {
             validate.add(leftChecker2)

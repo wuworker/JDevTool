@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:${user.home}/.jdevtool/jdevtool.db
+    type: com.zaxxer.hikari.HikariDataSource
+  sql:
+    init:
+      schema-locations: classpath:db/schema_init.sql
+      mode: always
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true

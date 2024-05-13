@@ -96,6 +96,9 @@ object Icons {
         loadSvg("icons/execute.svg")
     }
 
+    val suspend: Icon by lazy {
+        loadSvg("icons/suspend.svg")
+    }
 
     private fun loadSvg(path: String): Icon {
         return FlatSVGIcon(path)

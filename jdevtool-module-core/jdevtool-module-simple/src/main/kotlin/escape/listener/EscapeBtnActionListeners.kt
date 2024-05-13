@@ -3,7 +3,7 @@ package com.wxl.jdevtool.escape.listener
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.escape.EscapeTabbedModule
 import com.wxl.jdevtool.escape.EscapeType
-import com.wxl.jdevtool.escape.utils.EscapeUtils
+import com.wxl.jdevtool.util.EscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener

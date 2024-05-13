@@ -1,7 +1,8 @@
 package com.wxl.jdevtool
 
 import com.formdev.flatlaf.themes.FlatMacDarkLaf
-import com.wxl.jdevtool.component.HistoryTextField
+import com.wxl.jdevtool.component.history.ArrayHistoryList
+import com.wxl.jdevtool.component.history.HistoryTextField
 import org.junit.Test
 import java.awt.BorderLayout
 import java.awt.FlowLayout
@@ -21,7 +22,7 @@ class HistoryTextFieldTest {
         val frame = JFrame()
 
         val panel = JPanel(BorderLayout())
-        panel.add(HistoryTextField(10))
+        panel.add(HistoryTextField(ArrayHistoryList("test")))
 
         frame.contentPane = panel
         frame.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE

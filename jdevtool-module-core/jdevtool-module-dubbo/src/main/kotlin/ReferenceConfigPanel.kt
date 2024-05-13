@@ -1,7 +1,8 @@
 package com.wxl.jdevtool.dubbo
 
 import com.google.gson.reflect.TypeToken
-import com.wxl.jdevtool.component.HistoryTextField
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.dubbo.component.ConfigPanel
 import org.apache.dubbo.config.ReferenceConfig
 import org.apache.dubbo.rpc.service.GenericService
@@ -18,11 +19,11 @@ class ReferenceConfigPanel : ConfigPanel<ReferenceConfig<GenericService>>("消�
 
     override val configType: Type = object : TypeToken<ReferenceConfig<GenericService>>() {}.type
 
-    private val interfaceField = HistoryTextField(15)
+    private val interfaceField = HistoryTextField(StorageHistoryList("dubbo:reference:interface"))
 
-    private val versionField = HistoryTextField(10)
+    private val versionField = HistoryTextField(StorageHistoryList("dubbo:reference:version"))
 
-    private val urlField = HistoryTextField(15)
+    private val urlField = HistoryTextField(StorageHistoryList("dubbo:reference:url"))
 
     init {
         addKV("接口名称：", interfaceField)
@@ -55,6 +56,8 @@ class ReferenceConfigPanel : ConfigPanel<ReferenceConfig<GenericService>>("消�
     }
 
     override fun checkAndGetConfig(): ReferenceConfig<GenericService> {
+        showJsonView(config)
+
         if (config.`interface`.isNullOrBlank()) {
             throw IllegalArgumentException("接口名称(interface)不能为空")
         }

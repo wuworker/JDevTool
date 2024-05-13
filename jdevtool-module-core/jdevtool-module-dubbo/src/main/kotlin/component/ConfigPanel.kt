@@ -1,10 +1,14 @@
 package com.wxl.jdevtool.dubbo.component
 
 import com.formdev.flatlaf.FlatClientProperties
+import com.google.gson.ExclusionStrategy
+import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
 import com.wxl.jdevtool.component.ShrinkPanel
 import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.util.ComponentUtils
+import org.apache.dubbo.config.bootstrap.DubboBootstrap
+import org.apache.dubbo.rpc.model.ServiceMetadata
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
@@ -13,6 +17,7 @@ import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.io.Serial
 import java.lang.reflect.Type
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.swing.*
 
 /**
@@ -33,7 +38,7 @@ abstract class ConfigPanel<T>(
 
     val textAreaSp: RTextScrollPane
 
-    abstract val config: T
+    protected abstract val config: T
 
     abstract val configType: Type
 
@@ -145,6 +150,23 @@ abstract class ConfigPanel<T>(
         @Serial
         private const val serialVersionUID: Long = -7551996115823580859L
 
-        private val gson = GsonBuilder().setPrettyPrinting().create()
+        private val gson = GsonBuilder()
+            .setExclusionStrategies(object : ExclusionStrategy {
+                override fun shouldSkipField(f: FieldAttributes): Boolean {
+                    if (f.name == "id" || f.name == "prefix") {
+                        return true
+                    }
+                    return false
+                }
+
+                override fun shouldSkipClass(c: Class<*>): Boolean {
+                    return c == DubboBootstrap::class.java
+                            || c == Object::class.java
+                            || c == ServiceMetadata::class.java
+                            || c == AtomicBoolean::class.java
+                }
+            })
+            .setPrettyPrinting()
+            .create()
     }
 }

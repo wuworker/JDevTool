@@ -5,6 +5,7 @@ import com.formdev.flatlaf.themes.FlatMacDarkLaf
 import com.wxl.jdevtool.theme.AppTheme
 import com.wxl.jdevtool.toast.Toasts
 import org.fife.ui.rsyntaxtextarea.Theme
+import org.mybatis.spring.annotation.MapperScan
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 import javax.swing.JFrame
@@ -13,6 +14,7 @@ import javax.swing.JFrame
  * Create by wuxingle on 2024/01/02
  * 启动类
  */
+@MapperScan("com.wxl.jdevtool.db.mapper")
 @SpringBootApplication
 class JDevToolApplication
 
@@ -28,11 +30,11 @@ fun main(args: Array<String>) {
         Theme.load(JDevToolApplication::class.java.getResourceAsStream("/themes/rsyntax_dark.xml"))
     val appTheme = AppTheme(lookAndFeel, textAreaTheme)
 
-    JDevlToolContexts.theme = appTheme
+    AppContexts.theme = appTheme
 
     // 主frame
     val frame = JFrame()
-    JDevlToolContexts.mainFrame = frame
+    AppContexts.mainFrame = frame
 
     // init组件
     Toasts.setMainFrame(frame)

@@ -1,6 +1,7 @@
 package com.wxl.jdevtool.dubbo
 
-import com.wxl.jdevtool.component.HistoryTextField
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.dubbo.component.ConfigPanel
 import org.apache.dubbo.config.ApplicationConfig
 import java.io.Serial
@@ -15,7 +16,7 @@ class AppConfigPanel : ConfigPanel<ApplicationConfig>("应用配置") {
 
     override val configType = ApplicationConfig::class.java
 
-    private val nameField = HistoryTextField(10)
+    private val nameField = HistoryTextField(StorageHistoryList("dubbo:app:name"))
 
     init {
         addKV("应用名称：", nameField)
@@ -36,6 +37,9 @@ class AppConfigPanel : ConfigPanel<ApplicationConfig>("应用配置") {
     }
 
     override fun checkAndGetConfig(): ApplicationConfig {
+        //config赋值
+        showJsonView(config)
+
         val name = config.name
         if (name.isNullOrBlank()) {
             throw IllegalArgumentException("应用名称(name)不能为空")

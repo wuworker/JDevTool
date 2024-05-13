@@ -1,12 +1,13 @@
 package com.wxl.jdevtool.dubbo
 
 import com.formdev.flatlaf.extras.FlatSVGIcon
+import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.ComponentId
-import com.wxl.jdevtool.JDevlToolContexts
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.component.CopiedPanel
-import com.wxl.jdevtool.component.HistoryTextField
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.dubbo.component.ConfigPanel
 import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.util.ComponentUtils
@@ -80,10 +81,10 @@ class DubboTabbedModule : TabbedModule {
 
         invokePanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         reqPanel = JPanel(GridBagLayout())
-        methodField = HistoryTextField(10)
+        methodField = HistoryTextField(StorageHistoryList("dubbo:invoke:method"))
         methodExeBtn = ComponentFactory.createExecuteBtn()
 
-        val paramTypeHistory = arrayListOf<String>()
+        val paramTypeHistory = StorageHistoryList("dubbo:invoke:param:type")
         paramTypeField = CopiedPanel({
             val tf = HistoryTextField(paramTypeHistory)
             tf.columns = 10
@@ -96,7 +97,7 @@ class DubboTabbedModule : TabbedModule {
                 syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
                 showCaretLocation()
             }
-            JDevlToolContexts.theme.textAreaTheme.apply(area)
+            AppContexts.theme.textAreaTheme.apply(area)
             return@CopiedPanel area
         }, DEFAULT_IDENT)
 
@@ -245,5 +246,9 @@ class DubboTabbedModule : TabbedModule {
 
     companion object {
         const val DEFAULT_IDENT = 5
+
+        init {
+            System.setProperty("dubbo.application.logger", "slf4j")
+        }
     }
 }

@@ -5,6 +5,8 @@ import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.Icons
 import com.wxl.jdevtool.TabbedModule
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.extension.setHint
 import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
@@ -70,7 +72,8 @@ class JsonTabbedModule : TabbedModule {
         expandBtn = JButton("展开")
         compressBtn = JButton("压缩")
         getValBtn = JButton("求值")
-        jsonPathField = JTextField(15)
+        jsonPathField = HistoryTextField(StorageHistoryList("json.path"))
+        jsonPathField.columns = 15
         jsonPathChecker = object : InputChecker(jsonPathField) {
             override fun doCheck(component: JTextComponent): Boolean {
                 return !component.text.isNullOrBlank()

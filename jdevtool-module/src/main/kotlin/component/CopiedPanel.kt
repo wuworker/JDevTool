@@ -9,6 +9,7 @@ import java.awt.Component
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.io.Serial
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.function.Supplier
 import javax.swing.Box
@@ -91,6 +92,9 @@ class CopiedPanel<T : Component>(
 
             leftBox.add(Box.createVerticalStrut(insetSize))
             leftBox.add(component)
+
+            // 新增组件监听
+            triggerAdd()
         }
         SwingUtilities.updateComponentTreeUI(this)
     }
@@ -104,18 +108,28 @@ class CopiedPanel<T : Component>(
         }
 
         var i = 0
-        while (copiedComponents.size - num > 0) {
+        while (i < num && copiedComponents.size > 1) {
             // 删除间距
             leftBox.remove((copiedComponents.size - 1) * 2 - 1)
 
             val old = copiedComponents.removeAt(copiedComponents.size - 1)
             leftBox.remove(old)
             i++
+
+            // 删除组件监听
+            triggerRemove()
         }
         if (i > 0) {
             SwingUtilities.updateComponentTreeUI(this)
         }
         return i
+    }
+
+    /**
+     * 组件变化监听
+     */
+    fun addCopiedActionListener(listener: CopiedActionListener) {
+        listenerList.add(CopiedActionListener::class.java, listener)
     }
 
     private fun initListener() {
@@ -130,9 +144,40 @@ class CopiedPanel<T : Component>(
         }
     }
 
+    private fun triggerAdd() {
+        val listeners = listenerList.getListeners(CopiedActionListener::class.java)
+        val size = copiedComponents.size
+        for (listener in listeners) {
+            listener.componentAdd(size)
+        }
+    }
+
+    private fun triggerRemove() {
+        val listeners = listenerList.getListeners(CopiedActionListener::class.java)
+        val size = copiedComponents.size
+        for (listener in listeners) {
+            listener.componentRemove(size)
+        }
+    }
+
     companion object {
         @Serial
         private const val serialVersionUID: Long = -6494962017065440991L
     }
 
+}
+
+interface CopiedActionListener : EventListener {
+
+    /**
+     * 新增触发
+     * @param size 变化后的size
+     */
+    fun componentAdd(size: Int) {}
+
+    /**
+     * 删除触发
+     * @param size 变化后的size
+     */
+    fun componentRemove(size: Int) {}
 }

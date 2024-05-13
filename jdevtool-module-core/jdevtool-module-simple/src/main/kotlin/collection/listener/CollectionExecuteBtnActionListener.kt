@@ -3,6 +3,7 @@ package com.wxl.jdevtool.collection.listener
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.collection.CollectionOps
 import com.wxl.jdevtool.collection.CollectionTabbedModule
+import com.wxl.jdevtool.extension.getUnescapeText
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import java.awt.event.ActionEvent
@@ -28,7 +29,10 @@ class CollectionExecuteBtnActionListener(
         log.info { "collection op: ${(op)}" }
 
         // 分隔符
-        val splitStr = collectionTabbedModule.splitLabel.text
+        var splitStr = collectionTabbedModule.splitTextField.getUnescapeText()
+        if (splitStr.isEmpty()) {
+            splitStr = "\n"
+        }
         val coll1 = getCollection(collectionTabbedModule.leftTextArea1.text, splitStr)
         val coll2 = getCollection(collectionTabbedModule.leftTextArea2.text, splitStr).toSet()
 

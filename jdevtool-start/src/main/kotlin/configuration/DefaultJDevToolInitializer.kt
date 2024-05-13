@@ -2,7 +2,7 @@ package com.wxl.jdevtool.configuration
 
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.ComponentListener
-import com.wxl.jdevtool.JDevlToolContexts
+import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.theme.AppThemeListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.BeanCreationException
@@ -148,7 +148,7 @@ class DefaultJDevToolInitializer : JDevToolInitializer {
      * 初始化主题
      */
     override fun initTheme(context: ApplicationContext) {
-        val appTheme = JDevlToolContexts.theme
+        val appTheme = AppContexts.theme
         val themeListeners = context.getBeanProvider(AppThemeListener::class.java).orderedStream().toList()
         for (themeListener in themeListeners) {
             themeListener.themeChange(appTheme)

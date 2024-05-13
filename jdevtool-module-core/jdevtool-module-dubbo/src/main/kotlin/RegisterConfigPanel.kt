@@ -1,6 +1,7 @@
 package com.wxl.jdevtool.dubbo
 
-import com.wxl.jdevtool.component.HistoryTextField
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.dubbo.component.ConfigPanel
 import org.apache.dubbo.config.RegistryConfig
 import java.io.Serial
@@ -15,8 +16,7 @@ class RegisterConfigPanel : ConfigPanel<RegistryConfig>("注册中心") {
 
     override val configType = RegistryConfig::class.java
 
-    private val addressField = HistoryTextField(15)
-
+    private val addressField = HistoryTextField(StorageHistoryList("dubbo:register:address"))
 
     init {
         addKV("连接地址：", addressField)
@@ -37,6 +37,7 @@ class RegisterConfigPanel : ConfigPanel<RegistryConfig>("注册中心") {
     }
 
     override fun checkAndGetConfig(): RegistryConfig {
+        showJsonView(config)
         return config
     }
 

@@ -1,4 +1,4 @@
-package com.wxl.jdevtool.escape.utils
+package com.wxl.jdevtool.util
 
 import org.apache.commons.text.StringEscapeUtils
 import org.apache.commons.text.translate.*

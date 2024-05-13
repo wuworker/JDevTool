@@ -1,9 +1,12 @@
 package com.wxl.jdevtool.dubbo
 
 import com.google.gson.reflect.TypeToken
+import com.wxl.jdevtool.component.CopiedActionListener
 import com.wxl.jdevtool.component.CopiedPanel
-import com.wxl.jdevtool.component.HistoryTextField
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.dubbo.component.ConfigPanel
+import com.wxl.jdevtool.extension.getUnescapeText
 import com.wxl.jdevtool.util.ComponentUtils
 import java.awt.GridBagConstraints
 import java.awt.GridLayout
@@ -28,18 +31,23 @@ class AttachmentConfigPanel : ConfigPanel<MutableMap<String, String>>("附加参
     val entryFields = arrayListOf<Pair<JTextField, JTextField>>()
 
     init {
-        val keyHistory = arrayListOf<String>()
-        val valHistory = arrayListOf<String>()
+        val historyKeyList = StorageHistoryList("dubbo:attachment.key")
+        val historyValList = StorageHistoryList("dubbo:attachment.value")
         entryPanel = CopiedPanel({
             val p = JPanel(GridLayout(1, 2))
-            val k = HistoryTextField(keyHistory)
-            val v = HistoryTextField(valHistory)
+            val k = HistoryTextField(historyKeyList)
+            val v = HistoryTextField(historyValList)
             entryFields.add(Pair(k, v))
 
             p.add(k)
             p.add(v)
 
             p
+        })
+        entryPanel.addCopiedActionListener(object : CopiedActionListener {
+            override fun componentRemove(size: Int) {
+                entryFields.removeAt(entryFields.size - 1)
+            }
         })
 
         with(kvPanel) {
@@ -69,6 +77,7 @@ class AttachmentConfigPanel : ConfigPanel<MutableMap<String, String>>("附加参
     }
 
     override fun merge(mainConfig: MutableMap<String, String>, subConfig: MutableMap<String, String>) {
+        mainConfig.clear()
         mainConfig.putAll(subConfig)
     }
 
@@ -95,11 +104,18 @@ class AttachmentConfigPanel : ConfigPanel<MutableMap<String, String>>("附加参
 
     override fun showJsonView(config: MutableMap<String, String>) {
         for (entryField in entryFields) {
+            val k = entryField.first.getUnescapeText()
+            val v = entryField.second.getUnescapeText()
+            if (k.isEmpty() && v.isEmpty()) {
+                continue
+            }
             config[entryField.first.text] = entryField.second.text
         }
     }
 
     override fun checkAndGetConfig(): MutableMap<String, String> {
+        showJsonView(config)
+
         return config
     }
 

@@ -3,10 +3,11 @@ package com.wxl.jdevtool.txt
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
-import com.wxl.jdevtool.component.LabelTextPanel
+import com.wxl.jdevtool.component.history.HistoryTextField
+import com.wxl.jdevtool.component.history.StorageHistoryList
+import com.wxl.jdevtool.extension.setHint
 import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
-import com.wxl.jdevtool.validate.InputValidateGroup
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
@@ -40,28 +41,28 @@ class TxtTabbedModule : TabbedModule {
 
     final val downPanel: JSplitPane
 
-    final val originSplitText: LabelTextPanel
+    final val originSplitText: JTextField
 
-    final val originItemPreText: LabelTextPanel
+    final val originItemPreText: JTextField
 
-    final val originItemPostText: LabelTextPanel
+    final val originItemPostText: JTextField
 
-    final val originPreText: LabelTextPanel
+    final val originPreText: JTextField
 
-    final val originPostText: LabelTextPanel
+    final val originPostText: JTextField
 
     @ComponentId("originClearBtn")
     final val originClearBtn: JButton
 
-    final val targetSplitText: LabelTextPanel
+    final val targetSplitText: JTextField
 
-    final val targetItemPreText: LabelTextPanel
+    final val targetItemPreText: JTextField
 
-    final val targetItemPostText: LabelTextPanel
+    final val targetItemPostText: JTextField
 
-    final val targetPreText: LabelTextPanel
+    final val targetPreText: JTextField
 
-    final val targetPostText: LabelTextPanel
+    final val targetPostText: JTextField
 
     @ComponentId("targetClearBtn")
     final val targetClearBtn: JButton
@@ -86,20 +87,21 @@ class TxtTabbedModule : TabbedModule {
 
         // 源字符串处理
         originHeadPanel = JPanel()
-        originSplitText = LabelTextPanel("分隔符:")
-        originItemPreText = LabelTextPanel("每项前缀:")
-        originItemPostText = LabelTextPanel("每项后缀:")
-        originPreText = LabelTextPanel("前缀:")
-        originPostText = LabelTextPanel("后缀:")
+        originSplitText = HistoryTextField(StorageHistoryList("text.split.origin"))
+        originSplitText.setHint("\\n")
+        originItemPreText = HistoryTextField(StorageHistoryList("text.item.pre.origin"))
+        originItemPostText = HistoryTextField(StorageHistoryList("text.item.post.origin"))
+        originPreText = HistoryTextField(StorageHistoryList("text.pre.origin"))
+        originPostText = HistoryTextField(StorageHistoryList("text.post.origin"))
         originClearBtn = JButton("清空")
 
         // 目标字符串处理
         targetHeadPanel = JPanel()
-        targetSplitText = LabelTextPanel("分隔符:")
-        targetItemPreText = LabelTextPanel("每项前缀:")
-        targetItemPostText = LabelTextPanel("每项后缀:")
-        targetPreText = LabelTextPanel("前缀:")
-        targetPostText = LabelTextPanel("后缀:")
+        targetSplitText = HistoryTextField(StorageHistoryList("text.split.target"))
+        targetItemPreText = HistoryTextField(StorageHistoryList("text.item.pre.target"))
+        targetItemPostText = HistoryTextField(StorageHistoryList("text.item.post.target"))
+        targetPreText = HistoryTextField(StorageHistoryList("text.pre.target"))
+        targetPostText = HistoryTextField(StorageHistoryList("text.post.target"))
         targetClearBtn = JButton("清空")
         executeBtn = JButton("生成")
 
@@ -138,12 +140,11 @@ class TxtTabbedModule : TabbedModule {
         with(originHeadPanel) {
             layout = FlowLayout(FlowLayout.LEFT)
             border = BorderFactory.createTitledBorder("输入设置")
-            add(originSplitText)
-            add(originSplitText)
-            add(originItemPreText)
-            add(originItemPostText)
-            add(originPreText)
-            add(originPostText)
+            add(wrapperLabelInput("分隔符：", originSplitText))
+            add(wrapperLabelInput("每项前缀：", originItemPreText))
+            add(wrapperLabelInput("每项后缀：", originItemPostText))
+            add(wrapperLabelInput("前缀：", originPreText))
+            add(wrapperLabelInput("后缀：", originPostText))
             add(originClearBtn)
         }
 
@@ -151,12 +152,11 @@ class TxtTabbedModule : TabbedModule {
         with(targetHeadPanel) {
             layout = FlowLayout(FlowLayout.LEFT)
             border = BorderFactory.createTitledBorder("输出设置")
-            add(targetSplitText)
-            add(targetSplitText)
-            add(targetItemPreText)
-            add(targetItemPostText)
-            add(targetPreText)
-            add(targetPostText)
+            add(wrapperLabelInput("分隔符：", targetSplitText))
+            add(wrapperLabelInput("每项前缀：", targetItemPreText))
+            add(wrapperLabelInput("每项后缀：", targetItemPostText))
+            add(wrapperLabelInput("前缀：", targetPreText))
+            add(wrapperLabelInput("后缀：", targetPostText))
             add(targetClearBtn)
             add(executeBtn)
         }
@@ -195,7 +195,7 @@ class TxtTabbedModule : TabbedModule {
      * 输入校验
      */
     fun check(): Boolean {
-        return InputValidateGroup(originSplitText, leftChecker).check(true)
+        return leftChecker.check(true)
     }
 
     private fun initTextArea(textArea: RSyntaxTextArea) {
@@ -209,6 +209,13 @@ class TxtTabbedModule : TabbedModule {
     private fun initScrollPane(scrollPane: RTextScrollPane) {
         scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
         scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+    }
+
+    private fun wrapperLabelInput(name: String, textField: JTextField): JPanel {
+        val p = JPanel(FlowLayout(FlowLayout.LEFT))
+        p.add(JLabel(name))
+        p.add(textField)
+        return p
     }
 
     /**
