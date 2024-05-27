@@ -3,6 +3,7 @@ package com.wxl.jdevtool.dubbo
 import com.wxl.jdevtool.component.history.HistoryTextField
 import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.dubbo.component.ConfigPanel
+import com.wxl.jdevtool.dubbo.component.getString
 import org.apache.dubbo.config.ApplicationConfig
 import java.io.Serial
 
@@ -10,11 +11,7 @@ import java.io.Serial
  * Create by wuxingle on 2024/04/23
  * 应用配置
  */
-class AppConfigPanel : ConfigPanel<ApplicationConfig>("应用配置") {
-
-    override val config = ApplicationConfig()
-
-    override val configType = ApplicationConfig::class.java
+class AppConfigPanel : ConfigPanel<ApplicationConfig>("应用配置", ApplicationConfig::class.java) {
 
     private val nameField = HistoryTextField(StorageHistoryList("dubbo:app:name"))
 
@@ -22,26 +19,20 @@ class AppConfigPanel : ConfigPanel<ApplicationConfig>("应用配置") {
         addKV("应用名称：", nameField)
     }
 
-    override fun merge(mainConfig: ApplicationConfig, subConfig: ApplicationConfig) {
-        if (!subConfig.name.isNullOrBlank()) {
-            mainConfig.name = subConfig.name
-        }
+    override fun showKVView(config: Map<String, Any?>) {
+        nameField.text = config.getString(NAME_FIELD)
     }
 
-    override fun showKVView(config: ApplicationConfig) {
-        nameField.text = config.name
+    override fun getJsonFromKV(): Map<String, Any?> {
+        return mapOf(NAME_FIELD to nameField.text)
     }
 
-    override fun showJsonView(config: ApplicationConfig) {
-        config.name = nameField.text
-    }
-
+    /**
+     * 检查并获取配置
+     */
     override fun checkAndGetConfig(): ApplicationConfig {
-        //config赋值
-        showJsonView(config)
-
-        val name = config.name
-        if (name.isNullOrBlank()) {
+        val config = super.checkAndGetConfig()
+        if (config.name.isNullOrBlank()) {
             throw IllegalArgumentException("应用名称(name)不能为空")
         }
         return config
@@ -50,5 +41,7 @@ class AppConfigPanel : ConfigPanel<ApplicationConfig>("应用配置") {
     companion object {
         @Serial
         private const val serialVersionUID: Long = -8622907443777397803L
+
+        private const val NAME_FIELD = "name"
     }
 }

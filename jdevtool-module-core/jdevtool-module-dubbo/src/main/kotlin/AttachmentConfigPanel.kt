@@ -11,7 +11,6 @@ import com.wxl.jdevtool.util.ComponentUtils
 import java.awt.GridBagConstraints
 import java.awt.GridLayout
 import java.io.Serial
-import java.lang.reflect.Type
 import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
@@ -20,11 +19,10 @@ import javax.swing.JTextField
  * Create by wuxingle on 2024/04/24
  * 附加请求参数
  */
-class AttachmentConfigPanel : ConfigPanel<MutableMap<String, String>>("附加参数") {
-
-    override val config = linkedMapOf<String, String>()
-
-    override val configType: Type = object : TypeToken<LinkedHashMap<String, String>>() {}.type
+class AttachmentConfigPanel : ConfigPanel<Map<String, String>>(
+    "附加参数",
+    object : TypeToken<LinkedHashMap<String, String>>() {}.type
+) {
 
     val entryPanel: CopiedPanel<JPanel>
 
@@ -76,12 +74,12 @@ class AttachmentConfigPanel : ConfigPanel<MutableMap<String, String>>("附加参
         }
     }
 
-    override fun merge(mainConfig: MutableMap<String, String>, subConfig: MutableMap<String, String>) {
+    override fun merge(mainConfig: MutableMap<String, Any?>, subConfig: Map<String, Any?>) {
         mainConfig.clear()
         mainConfig.putAll(subConfig)
     }
 
-    override fun showKVView(config: MutableMap<String, String>) {
+    override fun showKVView(config: Map<String, Any?>) {
         val kvSize = entryPanel.copiedComponents.size
         val jsonSize = config.size
 
@@ -98,11 +96,12 @@ class AttachmentConfigPanel : ConfigPanel<MutableMap<String, String>>("附加参
 
         for ((i, entry) in config.entries.withIndex()) {
             entryFields[i].first.text = entry.key
-            entryFields[i].second.text = entry.value
+            entryFields[i].second.text = entry.value?.toString() ?: ""
         }
     }
 
-    override fun showJsonView(config: MutableMap<String, String>) {
+    override fun getJsonFromKV(): Map<String, Any?> {
+        val config = linkedMapOf<String, Any?>()
         for (entryField in entryFields) {
             val k = entryField.first.getUnescapeText()
             val v = entryField.second.getUnescapeText()
@@ -111,11 +110,6 @@ class AttachmentConfigPanel : ConfigPanel<MutableMap<String, String>>("附加参
             }
             config[entryField.first.text] = entryField.second.text
         }
-    }
-
-    override fun checkAndGetConfig(): MutableMap<String, String> {
-        showJsonView(config)
-
         return config
     }
 

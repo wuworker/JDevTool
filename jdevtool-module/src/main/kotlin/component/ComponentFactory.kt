@@ -1,8 +1,9 @@
 package com.wxl.jdevtool.component
 
-import com.formdev.flatlaf.FlatClientProperties
+import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.Icons
-import java.awt.Cursor
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
+import javax.swing.Icon
 import javax.swing.JButton
 import javax.swing.UIManager
 
@@ -28,27 +29,27 @@ object ComponentFactory {
     }
 
     /**
-     * 执行按钮
+     * 图片按钮
      */
-    fun createExecuteBtn(): JButton {
-        val btn = JButton(Icons.execute)
+    fun createIconBtn(icon: Icon, text: String = "", toolTip: String = ""): JButton {
+        val btn = JButton(icon)
         with(btn) {
-            icon = Icons.execute
+            this.text = text
             isBorderPainted = false
-            background = UIManager.getColor("window")
+            background = UIManager.getColor("Panel.background")
+            toolTipText = toolTip
         }
         return btn
     }
 
     /**
-     * 清空按钮
+     * 创建textarea
      */
-    fun createClearBtn(): JButton {
-        val button = JButton()
-        button.name = "TextField.clearButton"
-        button.putClientProperty(FlatClientProperties.STYLE_CLASS, "clearButton")
-        button.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_TOOLBAR_BUTTON)
-        button.cursor = Cursor.getDefaultCursor()
-        return button
+    fun createTextArea(): RSyntaxTextArea {
+        val textArea = RSyntaxTextArea()
+        AppContexts.theme.textAreaTheme.apply(textArea)
+        return textArea
     }
+
+
 }

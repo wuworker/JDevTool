@@ -1,8 +1,8 @@
 package com.wxl.jdevtool.configuration
 
+import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.ComponentListener
-import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.theme.AppThemeListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.BeanCreationException
@@ -17,8 +17,12 @@ import java.awt.event.ItemListener
 import java.awt.event.MouseListener
 import java.lang.reflect.Field
 import javax.swing.AbstractButton
+import javax.swing.JComboBox
+import javax.swing.JList
+import javax.swing.JTextField
 import javax.swing.event.CaretListener
 import javax.swing.event.DocumentListener
+import javax.swing.event.ListSelectionListener
 import javax.swing.text.JTextComponent
 
 /**
@@ -97,6 +101,10 @@ class DefaultJDevToolInitializer : JDevToolInitializer {
                     is ActionListener -> {
                         if (component is AbstractButton) {
                             component.addActionListener(bean)
+                        } else if (component is JComboBox<*>) {
+                            component.addActionListener(bean)
+                        } else if (component is JTextField) {
+                            component.addActionListener(bean)
                         } else {
                             throw BeanCreationException("bean: $beanName is not legal ActionListener")
                         }
@@ -131,6 +139,14 @@ class DefaultJDevToolInitializer : JDevToolInitializer {
                             component.document.addDocumentListener(bean)
                         } else {
                             throw BeanCreationException("bean: $beanName is not legal DocumentListener")
+                        }
+                    }
+
+                    is ListSelectionListener -> {
+                        if (component is JList<*>) {
+                            component.addListSelectionListener(bean)
+                        } else {
+                            throw BeanCreationException("bean: $beanName is not legal ListSelectionListener")
                         }
                     }
 

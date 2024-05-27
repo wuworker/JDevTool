@@ -17,8 +17,6 @@ class ShrinkPanel(
     val shrinkContent: JComponent
 ) : JPanel(BorderLayout()) {
 
-    private var lastSelected = false
-
     private val headPanel: JPanel
 
     private val shrinkPanel: JPanel
@@ -69,13 +67,7 @@ class ShrinkPanel(
     private fun initListener() {
         btn.addChangeListener {
             val btn = it.source as JToggleButton
-            val selected = btn.isSelected
-            if (selected == lastSelected) {
-                return@addChangeListener
-            }
-
-            shrinkPanel.isVisible = selected
-            lastSelected = selected
+            shrinkPanel.isVisible = btn.isSelected
         }
     }
 

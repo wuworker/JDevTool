@@ -1,5 +1,6 @@
 package com.wxl.jdevtool
 
+import com.google.gson.GsonBuilder
 import com.wxl.jdevtool.theme.AppTheme
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.context.ApplicationContext
@@ -39,6 +40,11 @@ object AppContexts {
     lateinit var environment: Environment
 
     /**
+     * gson
+     */
+    val gson = GsonBuilder().create()
+
+    /**
      * 处理数据落库线程池
      */
     private val dbPool = ThreadPoolExecutor(
@@ -71,9 +77,16 @@ object AppContexts {
     }
 
     /**
+     * 同步执行sql
+     */
+    fun <T, R> executeSql(clazz: Class<T>, runnable: (T) -> R): R {
+        return runnable(getMapper(clazz))
+    }
+
+    /**
      * 异步执行sql
      */
-    fun executeSql(runnable: Runnable) {
+    fun executeSqlAsync(runnable: Runnable) {
         dbPool.execute {
             try {
                 runnable.run()
@@ -83,8 +96,8 @@ object AppContexts {
         }
     }
 
-    fun <T> executeSql(clazz: Class<T>, runnable: (T) -> Unit) {
-        executeSql {
+    fun <T> executeSqlAsync(clazz: Class<T>, runnable: (T) -> Unit) {
+        executeSqlAsync {
             runnable(getMapper(clazz))
         }
     }

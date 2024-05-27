@@ -4,6 +4,7 @@ import com.formdev.flatlaf.FlatClientProperties
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import com.wxl.jdevtool.component.ShrinkPanel
 import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.util.ComponentUtils
@@ -26,6 +27,7 @@ import javax.swing.*
  */
 abstract class ConfigPanel<T>(
     configTitle: String,
+    val configClass: Type
 ) : JPanel(BorderLayout()) {
 
     val tabbedPane: JTabbedPane
@@ -38,13 +40,12 @@ abstract class ConfigPanel<T>(
 
     val textAreaSp: RTextScrollPane
 
-    protected abstract val config: T
-
-    abstract val configType: Type
+    private val configMap = linkedMapOf<String, Any?>()
 
     init {
         // kv配置
         kvPanel = JPanel(GridBagLayout())
+        kvPanel.border = BorderFactory.createEmptyBorder(5, 0, 0, 0)
 
         // json配置
         textArea = RSyntaxTextArea()
@@ -80,46 +81,71 @@ abstract class ConfigPanel<T>(
             val tabbed = it.source as JTabbedPane
             val selectIdx = tabbed.selectedIndex
             if (selectIdx == 0) {
-                val jsonConfig = try {
-                    gson.fromJson<T>(textArea.text, configType)
-                } catch (e: Exception) {
-                    null
-                }
-                if (jsonConfig != null) {
-                    merge(config, jsonConfig)
-                }
-                showKVView(config)
+                updateConfigFromJson()
+                showKVView(configMap)
             } else {
-                showJsonView(config)
-                textArea.text = gson.toJson(config)
+                updateConfigFromKV()
+                textArea.text = gson.toJson(configMap)
             }
         }
 
         add(ShrinkPanel(configTitle, tabbedPane))
+
+        initConfig(configMap)
+    }
+
+    private fun updateConfigFromKV() {
+        val jsonConfig = getJsonFromKV()
+        merge(configMap, jsonConfig)
+    }
+
+    private fun updateConfigFromJson() {
+        val jsonConfig = try {
+            gson.fromJson<Map<String, Any?>>(textArea.text, object : TypeToken<Map<String, Any?>>() {}.type)
+        } catch (e: Exception) {
+            null
+        }
+        if (jsonConfig != null) {
+            merge(configMap, jsonConfig)
+        }
+    }
+
+    protected open fun initConfig(config: MutableMap<String, Any?>) {
+
     }
 
     /**
      * 合并配置
      * sub合并到main里
      */
-    abstract fun merge(mainConfig: T, subConfig: T)
+    protected open fun merge(mainConfig: MutableMap<String, Any?>, subConfig: Map<String, Any?>) {
+        mainConfig.putAll(subConfig)
+    }
 
     /**
-     * 展示kv界面
-     * 展示config内容
+     * 据config内容，展示kv界面
      */
-    abstract fun showKVView(config: T)
+    abstract fun showKVView(config: Map<String, Any?>)
 
     /**
-     * 展示json界面
-     * 填充config
+     * kv界面内容转为json
      */
-    abstract fun showJsonView(config: T)
+    abstract fun getJsonFromKV(): Map<String, Any?>
 
     /**
      * 检查并获取配置
      */
-    abstract fun checkAndGetConfig(): T
+    open fun checkAndGetConfig(): T {
+        // 更新输入内容
+        if (tabbedPane.selectedIndex == 0) {
+            updateConfigFromKV()
+        } else {
+            updateConfigFromJson()
+        }
+        val str = gson.toJson(configMap)
+        return gson.fromJson(str, configClass)
+    }
+
 
     /**
      * 新增kv组件
@@ -169,4 +195,9 @@ abstract class ConfigPanel<T>(
             .setPrettyPrinting()
             .create()
     }
+}
+
+fun <K, V> Map<K, V>.getString(key: K): String {
+    val value = get(key)
+    return value?.toString() ?: ""
 }

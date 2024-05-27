@@ -32,15 +32,13 @@ class JDevToolApplicationRunListener : SpringApplicationRunListener {
     }
 
     override fun contextLoaded(context: ConfigurableApplicationContext) {
-
+        AppContexts.context = context
     }
 
     /**
      * 启动，已经刷新完毕
      */
     override fun started(context: ConfigurableApplicationContext, timeTaken: Duration) {
-        AppContexts.context = context
-
         context.getBean(JDevToolInitializer::class.java).init(context)
     }
 

@@ -41,7 +41,7 @@ class StorageHistoryList(
 
         // 删除重复或者不需要的
         if (delIds.isNotEmpty()) {
-            AppContexts.executeSql(TextHistoryRecordMapper::class.java) {
+            AppContexts.executeSqlAsync(TextHistoryRecordMapper::class.java) {
                 it.deleteByIds(delIds)
             }
         }
@@ -93,7 +93,7 @@ class StorageHistoryList(
 
         // 数据落库
         val date = Date()
-        AppContexts.executeSql(TextHistoryRecordMapper::class.java) {
+        AppContexts.executeSqlAsync(TextHistoryRecordMapper::class.java) {
             val recordDO = TextHistoryRecordDO(id, text, date)
             it.batchInsert(arrayListOf(recordDO))
 

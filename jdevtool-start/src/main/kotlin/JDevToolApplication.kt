@@ -14,7 +14,7 @@ import javax.swing.JFrame
  * Create by wuxingle on 2024/01/02
  * 启动类
  */
-@MapperScan("com.wxl.jdevtool.db.mapper")
+@MapperScan("com.wxl.jdevtool.**.db.mapper")
 @SpringBootApplication
 class JDevToolApplication
 

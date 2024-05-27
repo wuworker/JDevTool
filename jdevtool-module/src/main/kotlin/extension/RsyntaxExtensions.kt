@@ -1,0 +1,66 @@
+package com.wxl.jdevtool.extension
+
+/**
+ * Create by wuxingle on 2024/05/15
+ * rsyntax扩展
+ */
+
+enum class SyntaxEnum(
+    val style: String
+) {
+    SYNTAX_STYLE_NONE("text/plain"),
+    SYNTAX_STYLE_ACTIONSCRIPT("text/actionscript"),
+    SYNTAX_STYLE_ASSEMBLER_X86("text/asm"),
+    SYNTAX_STYLE_ASSEMBLER_6502("text/asm6502"),
+    SYNTAX_STYLE_BBCODE("text/bbcode"),
+    SYNTAX_STYLE_C("text/c"),
+    SYNTAX_STYLE_CLOJURE("text/clojure"),
+    SYNTAX_STYLE_CPLUSPLUS("text/cpp"),
+    SYNTAX_STYLE_CSHARP("text/cs"),
+    SYNTAX_STYLE_CSS("text/css"),
+    SYNTAX_STYLE_CSV("text/csv"),
+    SYNTAX_STYLE_D("text/d"),
+    SYNTAX_STYLE_DOCKERFILE("text/dockerfile"),
+    SYNTAX_STYLE_DART("text/dart"),
+    SYNTAX_STYLE_DELPHI("text/delphi"),
+    SYNTAX_STYLE_DTD("text/dtd"),
+    SYNTAX_STYLE_FORTRAN("text/fortran"),
+    SYNTAX_STYLE_GO("text/golang"),
+    SYNTAX_STYLE_GROOVY("text/groovy"),
+    SYNTAX_STYLE_HANDLEBARS("text/handlebars"),
+    SYNTAX_STYLE_HOSTS("text/hosts"),
+    SYNTAX_STYLE_HTACCESS("text/htaccess"),
+    SYNTAX_STYLE_HTML("text/html"),
+    SYNTAX_STYLE_INI("text/ini"),
+    SYNTAX_STYLE_JAVA("text/java"),
+    SYNTAX_STYLE_JAVASCRIPT("text/javascript"),
+    SYNTAX_STYLE_JSON("text/json"),
+    SYNTAX_STYLE_JSON_WITH_COMMENTS("text/jshintrc"),
+    SYNTAX_STYLE_JSP("text/jsp"),
+    SYNTAX_STYLE_KOTLIN("text/kotlin"),
+    SYNTAX_STYLE_LATEX("text/latex"),
+    SYNTAX_STYLE_LESS("text/less"),
+    SYNTAX_STYLE_LISP("text/lisp"),
+    SYNTAX_STYLE_LUA("text/lua"),
+    SYNTAX_STYLE_MAKEFILE("text/makefile"),
+    SYNTAX_STYLE_MARKDOWN("text/markdown"),
+    SYNTAX_STYLE_MXML("text/mxml"),
+    SYNTAX_STYLE_NSIS("text/nsis"),
+    SYNTAX_STYLE_PERL("text/perl"),
+    SYNTAX_STYLE_PHP("text/php"),
+    SYNTAX_STYLE_PROTO("text/proto"),
+    SYNTAX_STYLE_PROPERTIES_FILE("text/properties"),
+    SYNTAX_STYLE_PYTHON("text/python"),
+    SYNTAX_STYLE_RUBY("text/ruby"),
+    SYNTAX_STYLE_SAS("text/sas"),
+    SYNTAX_STYLE_SCALA("text/scala"),
+    SYNTAX_STYLE_SQL("text/sql"),
+    SYNTAX_STYLE_TCL("text/tcl"),
+    SYNTAX_STYLE_TYPESCRIPT("text/typescript"),
+    SYNTAX_STYLE_UNIX_SHELL("text/unix"),
+    SYNTAX_STYLE_VISUAL_BASIC("text/vb"),
+    SYNTAX_STYLE_WINDOWS_BATCH("text/bat"),
+    SYNTAX_STYLE_XML("text/xml"),
+    SYNTAX_STYLE_YAML("text/yaml"),
+    ;
+}

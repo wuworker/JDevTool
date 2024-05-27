@@ -3,6 +3,7 @@ package com.wxl.jdevtool.dubbo
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.ComponentId
+import com.wxl.jdevtool.Icons
 import com.wxl.jdevtool.TabbedModule
 import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.component.CopiedPanel
@@ -82,7 +83,7 @@ class DubboTabbedModule : TabbedModule {
         invokePanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         reqPanel = JPanel(GridBagLayout())
         methodField = HistoryTextField(StorageHistoryList("dubbo:invoke:method"))
-        methodExeBtn = ComponentFactory.createExecuteBtn()
+        methodExeBtn = ComponentFactory.createIconBtn(Icons.execute, toolTip = "执行调用")
 
         val paramTypeHistory = StorageHistoryList("dubbo:invoke:param:type")
         paramTypeField = CopiedPanel({

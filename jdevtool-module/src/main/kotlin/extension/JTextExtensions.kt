@@ -7,8 +7,11 @@ import com.wxl.jdevtool.toast.ToastType
 import com.wxl.jdevtool.toast.Toasts
 import com.wxl.jdevtool.util.ClipboardUtils
 import org.apache.commons.text.StringEscapeUtils
+import java.awt.Dimension
 import javax.swing.JTextArea
 import javax.swing.JTextField
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 import javax.swing.text.JTextComponent
 
 /**
@@ -49,6 +52,31 @@ fun JTextField.showCopy() {
         }
     }
     putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, copyBtn)
+}
+
+/**
+ * 随输入变化长度
+ */
+fun JTextField.resizeable() {
+    document.addDocumentListener(object : DocumentListener {
+        override fun insertUpdate(e: DocumentEvent) {
+            resize(e.length)
+        }
+
+        override fun removeUpdate(e: DocumentEvent) {
+            resize(e.length)
+        }
+
+        override fun changedUpdate(e: DocumentEvent) {
+            resize(e.length)
+        }
+
+        private fun resize(len: Int) {
+            val width = getFontMetrics(font).stringWidth(text)
+            preferredSize = Dimension(width + 7, preferredSize.height)
+            revalidate()
+        }
+    })
 }
 
 /**
