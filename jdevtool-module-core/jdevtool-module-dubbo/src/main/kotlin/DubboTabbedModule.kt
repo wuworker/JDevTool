@@ -189,6 +189,7 @@ class DubboTabbedModule : TabbedModule {
     }
 
     private fun <T> addConfigPanel(configPanel: ConfigPanel<T>) {
+        configPanel.initUI()
         mainPanel.add(
             configPanel, ComponentUtils.createConstraints(
                 gridwidth = GridBagConstraints.REMAINDER,

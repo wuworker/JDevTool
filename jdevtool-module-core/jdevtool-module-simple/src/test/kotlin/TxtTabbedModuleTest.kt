@@ -1,8 +1,6 @@
 package com.wxl.jdevtool
 
 import com.wxl.jdevtool.component.LabelTextPanel
-import com.wxl.jdevtool.theme.AppTheme
-import com.wxl.jdevtool.theme.AppThemeListener
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
@@ -19,7 +17,7 @@ import javax.swing.JPanel
  * 文本处理器
  */
 @Component
-class TxtTabbedModuleTest : TabbedModule, AppThemeListener {
+class TxtTabbedModuleTest : TabbedModule {
 
     private val log = KotlinLogging.logger {}
 
@@ -162,12 +160,4 @@ class TxtTabbedModuleTest : TabbedModule, AppThemeListener {
      * 模块提示
      */
     override val tip: String? = "文本处理"
-
-    /**
-     * 主题修改
-     */
-    override fun themeChange(theme: AppTheme) {
-        theme.textAreaTheme.apply(leftTextArea)
-        theme.textAreaTheme.apply(rightTextArea)
-    }
 }

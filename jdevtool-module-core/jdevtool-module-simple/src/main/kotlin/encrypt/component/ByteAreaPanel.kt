@@ -3,14 +3,12 @@ package com.wxl.jdevtool.encrypt.component
 import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.encrypt.KeyShowStyle
 import com.wxl.jdevtool.encrypt.extension.*
-import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.listener.FlowResizeComponentListener
 import com.wxl.jdevtool.toast.ToastType
 import com.wxl.jdevtool.toast.Toasts
 import com.wxl.jdevtool.util.ClipboardUtils
 import com.wxl.jdevtool.validate.InputChecker
 import com.wxl.jdevtool.validate.InputValidate
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rtextarea.RTextScrollPane
 import java.awt.BorderLayout
 import java.awt.Component
@@ -33,19 +31,19 @@ class ByteAreaPanel : JPanel(), InputValidate {
     // 上次的展示方式
     private var lastShowStyle: KeyShowStyle
 
-    val headPanel: JPanel
+    val headPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 
-    val stringRadio: JRadioButton
+    val stringRadio = JRadioButton("字符串")
 
-    val base64Radio: JRadioButton
+    val base64Radio = JRadioButton("BASE64")
 
-    val hexRadio: JRadioButton
+    val hexRadio = JRadioButton("十六进制")
 
-    val radioGroup: ButtonGroup
+    val radioGroup = ButtonGroup()
 
-    val textArea: RSyntaxTextArea
-
-    val textAreaSp: RTextScrollPane
+    val textArea = ComponentFactory.createTextArea {
+        lineWrap = true
+    }
 
     val inputChecker: InputChecker
 
@@ -65,15 +63,9 @@ class ByteAreaPanel : JPanel(), InputValidate {
         }
 
     init {
-        headPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-
-        stringRadio = JRadioButton("字符串")
         stringRadio.actionCommand = KeyShowStyle.STRING.name
-        base64Radio = JRadioButton("BASE64")
         base64Radio.actionCommand = KeyShowStyle.BASE64.name
-        hexRadio = JRadioButton("十六进制")
         hexRadio.actionCommand = KeyShowStyle.HEX.name
-        radioGroup = ButtonGroup()
         with(headPanel) {
             add(stringRadio)
             add(base64Radio)
@@ -87,10 +79,7 @@ class ByteAreaPanel : JPanel(), InputValidate {
         stringRadio.isSelected = true
         lastShowStyle = KeyShowStyle.STRING
 
-        textArea = RSyntaxTextArea()
-        textArea.lineWrap = true
-        textArea.showCaretLocation()
-        textAreaSp = RTextScrollPane(textArea)
+        val textAreaSp = RTextScrollPane(textArea)
         textAreaSp.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
         textAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         inputChecker = object : InputChecker(textArea, textAreaSp) {

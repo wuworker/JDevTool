@@ -19,7 +19,6 @@ import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.JToolBar
-import javax.swing.event.DocumentEvent
 import javax.swing.text.JTextComponent
 
 /**
@@ -37,13 +36,13 @@ class SecretTextFieldPanel(
     // 当前展示方式
     private var currentFormatIndex = 0
 
-    val textField: JTextField
+    val textField = JTextField(15)
 
-    val keyFormatBtn: JButton
+    val keyFormatBtn = JButton()
 
-    val keyGenBtn: JButton
+    val keyGenBtn = JButton()
 
-    val keyCopyBtn: JButton
+    val keyCopyBtn = ComponentFactory.createCopyBtn()
 
     val inputChecker: InputChecker
 
@@ -77,17 +76,14 @@ class SecretTextFieldPanel(
         }
 
     init {
-        textField = JTextField(15)
         textField.setHint("输入密钥")
 
-        keyFormatBtn = JButton()
         with(keyFormatBtn) {
             icon = keyFormatIconBase64Icon
             isContentAreaFilled = false
             toolTipText = "密钥BASE64方式展示"
         }
 
-        keyGenBtn = JButton()
         with(keyGenBtn) {
             icon = FlatSVGIcon("icons/encrypt/keygen.svg")
             rolloverIcon = FlatSVGIcon("icons/encrypt/keygenHover.svg")
@@ -96,7 +92,6 @@ class SecretTextFieldPanel(
             toolTipText = "随机生成密钥"
         }
 
-        keyCopyBtn = ComponentFactory.createCopyBtn()
         with(keyCopyBtn) {
             toolTipText = "复制到剪切板"
         }
