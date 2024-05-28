@@ -13,57 +13,40 @@ import kotlin.random.Random
  * Create by wuxingle on 2024/02/06
  * 消息摘要页面
  */
-class DigestPanel : JPanel() {
+class DigestPanel : JPanel(BorderLayout()) {
 
     @ComponentId("headPanel")
-    val headPanel: JPanel
+    val headPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 
     @ComponentId("algorithmComboBox")
-    val algorithmComboBox: JComboBox<DigestAlgorithm>
+    val algorithmComboBox = JComboBox(DigestAlgorithm.values())
 
     @ComponentId("hmacAlgorithmComboBox")
-    val hmacAlgorithmComboBox: JComboBox<HMacAlgorithm>
+    val hmacAlgorithmComboBox = JComboBox(HMacAlgorithm.values())
 
-    val secretTextField: SecretTextFieldPanel
-
-    @ComponentId("genBtn")
-    val genBtn: JButton
-
-    val downPanel: JSplitPane
-
-    val inByteArea: ByteAreaPanel
-
-    val outByteArea: ByteAreaPanel
-
-    init {
-        headPanel = JPanel()
-        algorithmComboBox = JComboBox(DigestAlgorithm.values())
-        hmacAlgorithmComboBox = JComboBox(HMacAlgorithm.values())
-        secretTextField = SecretTextFieldPanel {
-            when (it) {
-                KeyShowStyle.STRING -> {
-                    val array = ByteArray(8)
-                    for (i in array.indices) {
-                        array[i] = Random.nextInt(33, 127).toByte()
-                    }
-                    array
+    val secretTextField = SecretTextFieldPanel {
+        when (it) {
+            KeyShowStyle.STRING -> {
+                val array = ByteArray(8)
+                for (i in array.indices) {
+                    array[i] = Random.nextInt(33, 127).toByte()
                 }
-
-                else -> Random.nextBytes(8)
+                array
             }
+
+            else -> Random.nextBytes(8)
         }
-        genBtn = JButton("生成")
-
-        downPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT)
-        inByteArea = ByteAreaPanel()
-        outByteArea = ByteAreaPanel()
-
-        initUI()
     }
 
-    private fun initUI() {
+    @ComponentId("genBtn")
+    val genBtn = JButton("生成")
+
+    val inByteArea = ByteAreaPanel()
+
+    val outByteArea = ByteAreaPanel()
+
+    internal fun initUI() {
         with(headPanel) {
-            layout = FlowLayout(FlowLayout.LEFT)
             add(JLabel("消息摘要算法："))
             add(algorithmComboBox)
             add(hmacAlgorithmComboBox)
@@ -79,13 +62,14 @@ class DigestPanel : JPanel() {
         outByteArea.setShowStyle(KeyShowStyle.BASE64)
         outByteArea.border = BorderFactory.createTitledBorder("结果")
         outByteArea.addCopyBtn()
+
+        val downPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT)
         with(downPanel) {
             resizeWeight = 0.5
             leftComponent = inByteArea
             rightComponent = outByteArea
         }
 
-        layout = BorderLayout()
         add(headPanel, BorderLayout.NORTH)
         add(downPanel)
     }

@@ -47,7 +47,7 @@ class TxtFilePanel(
         }
 
         with(textArea) {
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
+            syntaxEditingStyle = style ?: SyntaxConstants.SYNTAX_STYLE_NONE
             isCodeFoldingEnabled = true
             showCaretLocation()
             text = fileDO.content

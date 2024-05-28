@@ -5,7 +5,7 @@ import com.jayway.jsonpath.JsonPath
 import com.jayway.jsonpath.Option
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.json.JsonTabbedModule
-import com.wxl.jdevtool.json.JsonUtils
+import com.wxl.jdevtool.util.JsonUtils
 import com.wxl.jdevtool.toast.ToastType
 import com.wxl.jdevtool.toast.Toasts
 import com.wxl.jdevtool.validate.InputValidateGroup

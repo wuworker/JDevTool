@@ -5,12 +5,12 @@ import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.Icons
 import com.wxl.jdevtool.TabbedModule
+import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.component.history.HistoryTextField
 import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.extension.setHint
 import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import org.springframework.core.annotation.Order
@@ -29,87 +29,63 @@ import javax.swing.text.JTextComponent
 @ComponentId("jsonTabbedModule")
 class JsonTabbedModule : TabbedModule {
 
-    final override val mainPanel: JPanel
+    override val mainPanel = JPanel(BorderLayout())
 
     @ComponentId("compressBtn")
-    final val compressBtn: JButton
+    val compressBtn = JButton("压缩")
 
     @ComponentId("expandBtn")
-    final val expandBtn: JButton
+    val expandBtn = JButton("展开")
 
     @ComponentId("getValBtn")
-    final val getValBtn: JButton
+    val getValBtn = JButton("求值")
 
     @ComponentId("jsonPathDescBtn")
-    final val jsonPathDescBtn: JButton
+    val jsonPathDescBtn = JButton(Icons.help)
 
-    final val jsonPathField: JTextField
+    val jsonPathField = HistoryTextField(StorageHistoryList("json.path"))
 
-    final val jsonPathChecker: InputChecker
-
-    @ComponentId("headPanel")
-    final val headPanel: JPanel
-
-    final val textPanel: JSplitPane
-
-    @ComponentId("leftTextArea")
-    final val leftTextArea: RSyntaxTextArea
-
-    final val leftSp: RTextScrollPane
-
-    final val leftInChecker: InputChecker
-
-    @ComponentId("rightTextArea")
-    final val rightTextArea: RSyntaxTextArea
-
-    final val rightSp: RTextScrollPane
-
-    init {
-        mainPanel = JPanel()
-
-        // 上方控制面板
-        headPanel = JPanel()
-        expandBtn = JButton("展开")
-        compressBtn = JButton("压缩")
-        getValBtn = JButton("求值")
-        jsonPathField = HistoryTextField(StorageHistoryList("json.path"))
-        jsonPathField.columns = 15
-        jsonPathChecker = object : InputChecker(jsonPathField) {
-            override fun doCheck(component: JTextComponent): Boolean {
-                return !component.text.isNullOrBlank()
-            }
+    val jsonPathChecker = object : InputChecker(jsonPathField) {
+        override fun doCheck(component: JTextComponent): Boolean {
+            return !component.text.isNullOrBlank()
         }
-
-        jsonPathDescBtn = JButton(Icons.help)
-
-        // 下方文本域
-        textPanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        leftTextArea = RSyntaxTextArea()
-        leftTextArea.syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
-        leftSp = RTextScrollPane(leftTextArea)
-        leftInChecker = object : InputChecker(leftTextArea, leftSp) {
-            override fun doCheck(component: JTextComponent): Boolean {
-                return !component.text.isNullOrBlank()
-            }
-        }
-        rightTextArea = RSyntaxTextArea()
-        rightSp = RTextScrollPane(rightTextArea)
-
-        initUI()
     }
 
-    private fun initUI() {
+    @ComponentId("headPanel")
+    val headPanel = JPanel(FlowLayout(FlowLayout.LEFT, 10, 10))
+
+    val textPanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+
+    @ComponentId("leftTextArea")
+    val leftTextArea = ComponentFactory.createTextArea {
+        syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
+    }
+
+    val leftSp = RTextScrollPane(leftTextArea)
+
+    val leftInChecker = object : InputChecker(leftTextArea, leftSp) {
+        override fun doCheck(component: JTextComponent): Boolean {
+            return !component.text.isNullOrBlank()
+        }
+    }
+
+    @ComponentId("rightTextArea")
+    val rightTextArea = ComponentFactory.createTextArea()
+
+    val rightSp = RTextScrollPane(rightTextArea)
+
+    override fun afterPropertiesSet() {
         // 上方输入布局
         with(jsonPathDescBtn) {
             toolTipText = "JsonPath说明"
         }
         with(jsonPathField) {
+            columns = 15
             setHint("输入JsonPath")
             putClientProperty(FlatClientProperties.TEXT_FIELD_TRAILING_COMPONENT, jsonPathDescBtn)
         }
 
         with(headPanel) {
-            layout = FlowLayout(FlowLayout.LEFT, 10, 10)
             border = BorderFactory.createTitledBorder("操作")
             add(JLabel("JsonPath:"))
             add(jsonPathField)
@@ -144,7 +120,6 @@ class JsonTabbedModule : TabbedModule {
         }
 
         with(mainPanel) {
-            layout = BorderLayout()
             add(headPanel, BorderLayout.NORTH)
             add(textPanel)
         }

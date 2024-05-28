@@ -1,7 +1,6 @@
 package com.wxl.jdevtool.dubbo
 
 import com.formdev.flatlaf.extras.FlatSVGIcon
-import com.wxl.jdevtool.AppContexts
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.Icons
 import com.wxl.jdevtool.TabbedModule
@@ -10,7 +9,6 @@ import com.wxl.jdevtool.component.CopiedPanel
 import com.wxl.jdevtool.component.history.HistoryTextField
 import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.dubbo.component.ConfigPanel
-import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.util.ComponentUtils
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants
@@ -31,60 +29,40 @@ import javax.swing.*
 @ComponentId("dubboTabbedModule")
 class DubboTabbedModule : TabbedModule {
 
-    final override val mainPanel: JPanel
+    override val mainPanel = JPanel(GridBagLayout())
 
-    final val versionCombox: JComboBox<String>
-
-    final val configPanel: JPanel
-
-    final val scrollPane: JScrollPane
+    val versionCombox = JComboBox(arrayOf("2.7.5"))
 
     // 应用配置
-    final val appConfigPanel: AppConfigPanel
+    val appConfigPanel = AppConfigPanel()
 
     // 注册中心配置
-    final val registerConfigPanel: RegisterConfigPanel
+    val registerConfigPanel = RegisterConfigPanel()
 
     // 消费者配置
-    final val referenceConfigPanel: ReferenceConfigPanel
+    val referenceConfigPanel = ReferenceConfigPanel()
 
     // attachment
-    final val attachmentConfigPanel: AttachmentConfigPanel
+    val attachmentConfigPanel = AttachmentConfigPanel()
 
-    final val invokePanel: JSplitPane
+    val invokePanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
 
-    final val reqPanel: JPanel
+    val reqPanel = JPanel(GridBagLayout())
 
-    final val methodField: HistoryTextField
+    val methodField = HistoryTextField(StorageHistoryList("dubbo:invoke:method"))
 
     @ComponentId("methodExeBtn")
-    final val methodExeBtn: JButton
+    val methodExeBtn = ComponentFactory.createIconBtn(Icons.execute, toolTip = "执行调用")
 
-    final val paramTypeField: CopiedPanel<HistoryTextField>
+    val paramTypeField: CopiedPanel<HistoryTextField>
 
-    final val paramTextArea: CopiedPanel<RSyntaxTextArea>
+    val paramTextArea: CopiedPanel<RSyntaxTextArea>
 
-    final val resultArea: RSyntaxTextArea
-
-    final val resultAreaSp: RTextScrollPane
+    val resultArea = ComponentFactory.createTextArea {
+        syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
+    }
 
     init {
-        mainPanel = JPanel(GridBagLayout())
-        versionCombox = JComboBox(arrayOf("2.7.5"))
-
-        configPanel = JPanel()
-        scrollPane = JScrollPane(configPanel)
-
-        appConfigPanel = AppConfigPanel()
-        registerConfigPanel = RegisterConfigPanel()
-        referenceConfigPanel = ReferenceConfigPanel()
-        attachmentConfigPanel = AttachmentConfigPanel()
-
-        invokePanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        reqPanel = JPanel(GridBagLayout())
-        methodField = HistoryTextField(StorageHistoryList("dubbo:invoke:method"))
-        methodExeBtn = ComponentFactory.createIconBtn(Icons.execute, toolTip = "执行调用")
-
         val paramTypeHistory = StorageHistoryList("dubbo:invoke:param:type")
         paramTypeField = CopiedPanel({
             val tf = HistoryTextField(paramTypeHistory)
@@ -92,23 +70,15 @@ class DubboTabbedModule : TabbedModule {
             tf
         })
         paramTextArea = CopiedPanel({
-            val area = RSyntaxTextArea()
-            with(area) {
+            val area = ComponentFactory.createTextArea {
                 rows = 5
                 syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
-                showCaretLocation()
             }
-            AppContexts.theme.textAreaTheme.apply(area)
             return@CopiedPanel area
         }, DEFAULT_IDENT)
-
-        resultArea = RSyntaxTextArea()
-        resultAreaSp = RTextScrollPane(resultArea)
-
-        initUI()
     }
 
-    private fun initUI() {
+    override fun afterPropertiesSet() {
         addRow(JLabel("dubbo版本："), versionCombox)
 
         addConfigPanel(appConfigPanel)
@@ -177,17 +147,9 @@ class DubboTabbedModule : TabbedModule {
         }
         val sp = JScrollPane(reqPanel)
 
-        // 响应
-        with(resultArea) {
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_JSON
-            isCodeFoldingEnabled = true
-            showCaretLocation()
-        }
-
+        val resultAreaSp = RTextScrollPane(resultArea)
         with(resultAreaSp) {
             border = BorderFactory.createTitledBorder("响应")
-            verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-            horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
         }
 
         invokePanel.leftComponent = sp

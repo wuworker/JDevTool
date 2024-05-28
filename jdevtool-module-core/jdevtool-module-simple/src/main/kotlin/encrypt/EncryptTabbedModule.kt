@@ -18,25 +18,23 @@ import javax.swing.JTabbedPane
 @ComponentId("encryptTabbedModule")
 class EncryptTabbedModule : TabbedModule {
 
-    final override val mainPanel: JPanel
+    override val mainPanel = JPanel(BorderLayout())
 
-    final val tabbedPane: JTabbedPane
+    val tabbedPane = JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT)
 
     @ComponentId("digestPanel")
-    final val digestPanel: DigestPanel
+    val digestPanel = DigestPanel()
 
     @ComponentId("symmetricCipherPanel")
-    final val symmetricCipherPanel: SymmetricCipherPanel
+    val symmetricCipherPanel = SymmetricCipherPanel()
 
     @ComponentId("asymmetricCipherPanel")
-    final val asymmetricCipherPanel: AsymmetricCipherPanel
+    val asymmetricCipherPanel = AsymmetricCipherPanel()
 
-    init {
-        mainPanel = JPanel(BorderLayout())
-        tabbedPane = JTabbedPane(JTabbedPane.TOP, JTabbedPane.WRAP_TAB_LAYOUT)
-        digestPanel = DigestPanel()
-        symmetricCipherPanel = SymmetricCipherPanel()
-        asymmetricCipherPanel = AsymmetricCipherPanel()
+    override fun afterPropertiesSet() {
+        digestPanel.initUI()
+        symmetricCipherPanel.initUI()
+        asymmetricCipherPanel.initUI()
 
         tabbedPane.addTab("消息摘要", null, digestPanel, "消息摘要")
         tabbedPane.addTab("对称加密", null, symmetricCipherPanel, "对称加密")

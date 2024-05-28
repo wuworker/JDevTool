@@ -24,9 +24,9 @@ class AttachmentConfigPanel : ConfigPanel<Map<String, String>>(
     object : TypeToken<LinkedHashMap<String, String>>() {}.type
 ) {
 
-    val entryPanel: CopiedPanel<JPanel>
+    private val entryPanel: CopiedPanel<JPanel>
 
-    val entryFields = arrayListOf<Pair<JTextField, JTextField>>()
+    private val entryFields = arrayListOf<Pair<JTextField, JTextField>>()
 
     init {
         val historyKeyList = StorageHistoryList("dubbo:attachment.key")

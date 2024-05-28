@@ -13,55 +13,35 @@ import javax.swing.*
  * Create by wuxingle on 2024/02/27
  * 对称加密页面
  */
-class SymmetricCipherPanel : JPanel() {
+class SymmetricCipherPanel : JPanel(BorderLayout()) {
 
     @ComponentId("algorithmComboBox")
-    val algorithmComboBox: JComboBox<SymmetricAlgorithm>
+    val algorithmComboBox = JComboBox(SymmetricAlgorithm.values())
 
-    val modeAlgorithmComboBox: JComboBox<AlgorithmMode>
+    val modeAlgorithmComboBox = JComboBox(AlgorithmMode.values())
 
-    val paddingAlgorithmComboBox: JComboBox<AlgorithmPadding>
+    val paddingAlgorithmComboBox = JComboBox(AlgorithmPadding.values())
 
     @ComponentId("keyGenBtn")
-    val keyGenBtn: JButton
+    val keyGenBtn = JButton("随机生成")
 
-    val keyLenLabel: JLabel
+    val keyLenLabel = JLabel("密钥长度:")
 
-    val keyLenComboBox: JComboBox<Int>
+    val keyLenComboBox = JComboBox(arrayOf(128, 192, 256))
 
-    val keyPanel: ByteAreaPanel
+    val keyPanel = ByteAreaPanel()
 
-    val splitPane: JSplitPane
-
-    val enPanel: ByteAreaPanel
+    val enPanel = ByteAreaPanel()
 
     @ComponentId("enBtn")
-    val enBtn: JButton
+    val enBtn = JButton("加密=>")
 
-    val dePanel: ByteAreaPanel
+    val dePanel = ByteAreaPanel()
 
     @ComponentId("deBtn")
-    val deBtn: JButton
+    val deBtn = JButton("解密<=")
 
-    init {
-        algorithmComboBox = JComboBox(SymmetricAlgorithm.values())
-        modeAlgorithmComboBox = JComboBox(AlgorithmMode.values())
-        paddingAlgorithmComboBox = JComboBox(AlgorithmPadding.values())
-        keyGenBtn = JButton("随机生成")
-        keyLenLabel = JLabel("密钥长度:")
-        // aes密钥长度
-        keyLenComboBox = JComboBox(arrayOf(128, 192, 256))
-        keyPanel = ByteAreaPanel()
-        splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        enPanel = ByteAreaPanel()
-        enBtn = JButton("加密=>")
-        dePanel = ByteAreaPanel()
-        deBtn = JButton("解密<=")
-
-        initUI()
-    }
-
-    private fun initUI() {
+    internal fun initUI() {
         val panel1 = JPanel(BorderLayout())
         val headPanel = JPanel(FlowLayout(FlowLayout.LEFT))
         with(headPanel) {
@@ -90,13 +70,14 @@ class SymmetricCipherPanel : JPanel() {
         dePanel.addCopyBtn()
         dePanel.setShowStyle(KeyShowStyle.BASE64)
         dePanel.addCustom(deBtn)
+
+        val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         with(splitPane) {
             resizeWeight = 0.5
             leftComponent = enPanel
             rightComponent = dePanel
         }
 
-        layout = BorderLayout()
         add(panel1, BorderLayout.NORTH)
         add(splitPane)
     }

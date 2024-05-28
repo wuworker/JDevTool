@@ -33,189 +33,122 @@ class TimeTabbedModule : TabbedModule {
 
     private val dateTimeChineseFormatter = DateTimeFormatter.ofPattern("yyyy年MM月dd号 HH点mm分ss秒")
 
-    final override val mainPanel: JPanel
+    override val mainPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 
     // 时区选择，当前时间
-    final val timeZoneCombox: JComboBox<TimeZoneEnum>
+    val timeZoneCombox = JComboBox(TimeZoneEnum.values())
 
-    final val formatTimeLabel: JLabel
+    val formatTimeLabel = JLabel()
 
-    final val nowTimeText: JTextField
+    val nowTimeText = JTextField(20)
 
-    final val nowStampText: JTextField
+    val nowStampText = JTextField(20)
 
     // 时间戳转换
-    final val stamp2TimeInText: JTextField
+    val stamp2TimeInText = createJTextField(20, TextInputType.NUMBER)
 
-    final val stamp2TimeInChecker: InputChecker
+    val stamp2TimeInChecker: InputChecker = NotBlankInputChecker(stamp2TimeInText)
 
     @ComponentId("stamp2TimeConvertBtn")
-    final val stamp2TimeConvertBtn: JButton
+    val stamp2TimeConvertBtn = JButton("转换")
 
-    final val stamp2TimeOutText: JTextField
+    val stamp2TimeOutText = createJTextField(20, null)
 
-    final val time2StampInText: JTextField
+    val time2StampInText = createJTextField(20, TextInputType.DATETIME)
 
-    final val time2StampInChecker: InputChecker
+    val time2StampInChecker: InputChecker = NotBlankInputChecker(time2StampInText)
 
     @ComponentId("time2StampConvertBtn")
-    final val time2StampConvertBtn: JButton
+    val time2StampConvertBtn = JButton("转换")
 
-    final val time2StampOutText: JTextField
+    val time2StampOutText = createJTextField(20, null)
 
     // 日期计算
     @ComponentId("dateCalculateInText")
-    final val dateCalculateInText: JTextField
+    val dateCalculateInText = createJTextField(10, TextInputType.DATE)
 
-    final val dateCalculateChecker: InputChecker
+    val dateCalculateChecker: InputChecker = AllTrueInputChecker(dateCalculateInText)
 
     @ComponentId("dateOpComboBox")
-    final val dateOpComboBox: JComboBox<TimeOp>
+    val dateOpComboBox = JComboBox(TimeOp.values())
 
     @ComponentId("dateUnitText")
-    final val dateUnitText: JTextField
+    val dateUnitText = createJTextField(4, TextInputType.NUMBER)
 
     @ComponentId("dateUnitComboBox")
-    final val dateUnitComboBox: JComboBox<DateUnit>
+    val dateUnitComboBox = JComboBox(DateUnit.values())
 
-    final val dateCalculateOutText: JTextField
+    val dateCalculateOutText = createJTextField(10, null)
 
     @ComponentId("dateDiffInText1")
-    final val dateDiffInText1: JTextField
+    val dateDiffInText1 = createJTextField(10, TextInputType.DATE)
 
-    final val dateDiffChecker1: InputChecker
+    val dateDiffChecker1: InputChecker = AllTrueInputChecker(dateDiffInText1)
 
     @ComponentId("dateDiffInText2")
-    final val dateDiffInText2: JTextField
+    val dateDiffInText2 = createJTextField(10, TextInputType.DATE)
 
-    final val dateDiffChecker2: InputChecker
+    val dateDiffChecker2: InputChecker = AllTrueInputChecker(dateDiffInText2)
 
-    final val dateDiffOutText: JTextField
+    val dateDiffOutText = createJTextField(15, null)
 
     // 时间计算
     @ComponentId("timeCalculateInText")
-    final val timeCalculateInText: JTextField
+    val timeCalculateInText = createJTextField(10, TextInputType.TIME)
 
-    final val timeCalculateChecker: InputChecker
+    val timeCalculateChecker: InputChecker = AllTrueInputChecker(timeCalculateInText)
 
     @ComponentId("timeOpComboBox")
-    final val timeOpComboBox: JComboBox<TimeOp>
+    val timeOpComboBox = JComboBox(TimeOp.values())
 
     @ComponentId("timeUnitText")
-    final val timeUnitText: JTextField
+    val timeUnitText = createJTextField(4, TextInputType.NUMBER)
 
     @ComponentId("timeUnitComboBox")
-    final val timeUnitComboBox: JComboBox<TimeUnit>
+    val timeUnitComboBox = JComboBox(TimeUnit.values())
 
-    final val timeCalculateOutText: JTextField
+    val timeCalculateOutText = createJTextField(10, null)
 
     @ComponentId("timeDiffInText1")
-    final val timeDiffInText1: JTextField
+    val timeDiffInText1 = createJTextField(10, TextInputType.TIME)
 
-    final val timeDiffChecker1: InputChecker
+    val timeDiffChecker1: InputChecker = AllTrueInputChecker(timeDiffInText1)
 
     @ComponentId("timeDiffInText2")
-    final val timeDiffInText2: JTextField
+    val timeDiffInText2 = createJTextField(10, TextInputType.TIME)
 
-    final val timeDiffChecker2: InputChecker
+    val timeDiffChecker2: InputChecker = AllTrueInputChecker(timeDiffInText2)
 
-    final val timeDiffOutText: JTextField
+    val timeDiffOutText = createJTextField(20, null)
 
     @ComponentId("timeSText")
-    final val timeSText: JTextField
+    val timeSText = createJTextField(5, TextInputType.NUMBER)
 
     @ComponentId("timeMText")
-    final val timeMText: JTextField
+    val timeMText = createJTextField(4, TextInputType.NUMBER)
 
     @ComponentId("timeMSText")
-    final val timeMSText: JTextField
+    val timeMSText = createJTextField(4, TextInputType.NUMBER)
 
     @ComponentId("timeHText")
-    final val timeHText: JTextField
+    val timeHText = createJTextField(4, TextInputType.NUMBER)
 
     @ComponentId("timeHMText")
-    final val timeHMText: JTextField
+    val timeHMText = createJTextField(4, TextInputType.NUMBER)
 
     @ComponentId("timeHMSText")
-    final val timeHMSText: JTextField
+    val timeHMSText = createJTextField(4, TextInputType.NUMBER)
 
-    private val timer: Timer
-
-    init {
-        mainPanel = JPanel(FlowLayout(FlowLayout.LEFT))
-        timeZoneCombox = JComboBox(TimeZoneEnum.values())
-
-        formatTimeLabel = JLabel()
-
-        // 当前时间
-        nowTimeText = JTextField(20)
-
-        nowStampText = JTextField(20)
-
-        // 时间转换
-        stamp2TimeInText = createJTextField(20, TextInputType.NUMBER)
-        stamp2TimeInChecker = NotBlankInputChecker(stamp2TimeInText)
-        stamp2TimeConvertBtn = JButton("转换")
-        stamp2TimeOutText = createJTextField(20, null)
-
-        time2StampInText = createJTextField(20, TextInputType.DATETIME)
-        time2StampInChecker = NotBlankInputChecker(time2StampInText)
-
-        time2StampConvertBtn = JButton("转换")
-        time2StampOutText = createJTextField(20, null)
-
-        // 日期计算
-        dateCalculateInText = createJTextField(10, TextInputType.DATE)
-        dateCalculateChecker = AllTrueInputChecker(dateCalculateInText)
-
-        dateOpComboBox = JComboBox(TimeOp.values())
-        dateUnitText = createJTextField(4, TextInputType.NUMBER)
-
-        dateUnitComboBox = JComboBox(DateUnit.values())
-        dateCalculateOutText = createJTextField(10, null)
-
-        dateDiffInText1 = createJTextField(10, TextInputType.DATE)
-        dateDiffChecker1 = AllTrueInputChecker(dateDiffInText1)
-
-        dateDiffInText2 = createJTextField(10, TextInputType.DATE)
-        dateDiffChecker2 = AllTrueInputChecker(dateDiffInText2)
-
-        dateDiffOutText = createJTextField(15, null)
-
-        // 时间计算
-        timeCalculateInText = createJTextField(10, TextInputType.TIME)
-        timeCalculateChecker = AllTrueInputChecker(timeCalculateInText)
-
-        timeOpComboBox = JComboBox(TimeOp.values())
-        timeUnitText = createJTextField(4, TextInputType.NUMBER)
-        timeUnitComboBox = JComboBox(TimeUnit.values())
-        timeCalculateOutText = createJTextField(10, null)
-
-        timeDiffInText1 = createJTextField(10, TextInputType.TIME)
-        timeDiffChecker1 = AllTrueInputChecker(timeDiffInText1)
-
-        timeDiffInText2 = createJTextField(10, TextInputType.TIME)
-        timeDiffChecker2 = AllTrueInputChecker(timeDiffInText2)
-        timeDiffOutText = createJTextField(20, null)
-
-        timeSText = createJTextField(5, TextInputType.NUMBER)
-        timeMText = createJTextField(4, TextInputType.NUMBER)
-        timeMSText = createJTextField(4, TextInputType.NUMBER)
-        timeHText = createJTextField(4, TextInputType.NUMBER)
-        timeHMText = createJTextField(4, TextInputType.NUMBER)
-        timeHMSText = createJTextField(4, TextInputType.NUMBER)
-
-        timer = Timer(1000) {
+    private val timer: Timer by lazy {
+        Timer(1000) {
             showCurrentTime()
         }
-
-        initUI()
     }
 
     /**
      * 初始化布局
      */
-    private fun initUI() {
+    override fun afterPropertiesSet() {
         // 时区选择
         val timeZonePanel = JPanel(FlowLayout(FlowLayout.LEFT))
         // 默认选到东八区

@@ -3,13 +3,11 @@ package com.wxl.jdevtool.txt
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
+import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.component.history.HistoryTextField
 import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.extension.setHint
-import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -29,116 +27,67 @@ import javax.swing.text.JTextComponent
 @ComponentId("txtTabbedModule")
 class TxtTabbedModule : TabbedModule {
 
-    final override val mainPanel: JPanel
-
-    final val headPanel: JPanel
+    override val mainPanel = JPanel(BorderLayout())
 
     @ComponentId("originHeadPanel")
-    final val originHeadPanel: JPanel
+    val originHeadPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 
     @ComponentId("targetHeadPanel")
-    final val targetHeadPanel: JPanel
+    val targetHeadPanel = JPanel(FlowLayout(FlowLayout.LEFT))
 
-    final val downPanel: JSplitPane
+    val originSplitText = HistoryTextField(StorageHistoryList("text.split.origin"))
 
-    final val originSplitText: JTextField
+    val originItemPreText = HistoryTextField(StorageHistoryList("text.item.pre.origin"))
 
-    final val originItemPreText: JTextField
+    val originItemPostText = HistoryTextField(StorageHistoryList("text.item.post.origin"))
 
-    final val originItemPostText: JTextField
+    val originPreText = HistoryTextField(StorageHistoryList("text.pre.origin"))
 
-    final val originPreText: JTextField
-
-    final val originPostText: JTextField
+    val originPostText = HistoryTextField(StorageHistoryList("text.post.origin"))
 
     @ComponentId("originClearBtn")
-    final val originClearBtn: JButton
+    val originClearBtn = JButton("清空")
 
-    final val targetSplitText: JTextField
+    val targetSplitText = HistoryTextField(StorageHistoryList("text.split.target"))
 
-    final val targetItemPreText: JTextField
+    val targetItemPreText = HistoryTextField(StorageHistoryList("text.item.pre.target"))
 
-    final val targetItemPostText: JTextField
+    val targetItemPostText = HistoryTextField(StorageHistoryList("text.item.post.target"))
 
-    final val targetPreText: JTextField
+    val targetPreText = HistoryTextField(StorageHistoryList("text.pre.target"))
 
-    final val targetPostText: JTextField
+    val targetPostText = HistoryTextField(StorageHistoryList("text.post.target"))
 
     @ComponentId("targetClearBtn")
-    final val targetClearBtn: JButton
+    val targetClearBtn = JButton("清空")
 
     @ComponentId("executeBtn")
-    final val executeBtn: JButton
+    val executeBtn = JButton("生成")
 
     @ComponentId("leftTextArea")
-    final val leftTextArea: RSyntaxTextArea
+    val leftTextArea = ComponentFactory.createTextArea()
 
-    final val leftSp: RTextScrollPane
+    val leftSp = RTextScrollPane(leftTextArea)
 
-    final val leftChecker: InputChecker
-
-    @ComponentId("rightTextArea")
-    final val rightTextArea: RSyntaxTextArea
-
-    final val rightSp: RTextScrollPane
-
-    init {
-        mainPanel = JPanel()
-
-        // 源字符串处理
-        originHeadPanel = JPanel()
-        originSplitText = HistoryTextField(StorageHistoryList("text.split.origin"))
-        originSplitText.setHint("\\n")
-        originItemPreText = HistoryTextField(StorageHistoryList("text.item.pre.origin"))
-        originItemPostText = HistoryTextField(StorageHistoryList("text.item.post.origin"))
-        originPreText = HistoryTextField(StorageHistoryList("text.pre.origin"))
-        originPostText = HistoryTextField(StorageHistoryList("text.post.origin"))
-        originClearBtn = JButton("清空")
-
-        // 目标字符串处理
-        targetHeadPanel = JPanel()
-        targetSplitText = HistoryTextField(StorageHistoryList("text.split.target"))
-        targetItemPreText = HistoryTextField(StorageHistoryList("text.item.pre.target"))
-        targetItemPostText = HistoryTextField(StorageHistoryList("text.item.post.target"))
-        targetPreText = HistoryTextField(StorageHistoryList("text.pre.target"))
-        targetPostText = HistoryTextField(StorageHistoryList("text.post.target"))
-        targetClearBtn = JButton("清空")
-        executeBtn = JButton("生成")
-
-        // 上方控制面板
-        headPanel = JPanel()
-
-        // 下方
-        downPanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-
-        // 左边输入
-        leftTextArea = RSyntaxTextArea()
-        leftSp = RTextScrollPane(leftTextArea)
-        leftChecker = object : InputChecker(leftTextArea, leftSp) {
-            override fun doCheck(component: JTextComponent): Boolean {
-                return !component.text.isNullOrBlank()
-            }
-
-            override fun documentUpdate(e: DocumentEvent) {
-                showNormal()
-            }
+    val leftChecker = object : InputChecker(leftTextArea, leftSp) {
+        override fun doCheck(component: JTextComponent): Boolean {
+            return !component.text.isNullOrBlank()
         }
 
-        // 右边输出
-        rightTextArea = RSyntaxTextArea()
-        rightSp = RTextScrollPane(rightTextArea)
-
-        // 布局初始化
-        initUI()
+        override fun documentUpdate(e: DocumentEvent) {
+            showNormal()
+        }
     }
 
-    /**
-     * 布局初始化
-     */
-    private fun initUI() {
+    @ComponentId("rightTextArea")
+    val rightTextArea = ComponentFactory.createTextArea()
+
+    override fun afterPropertiesSet() {
+        // 源字符串处理
+        originSplitText.setHint("\\n")
+
         // 上方输入布局
         with(originHeadPanel) {
-            layout = FlowLayout(FlowLayout.LEFT)
             border = BorderFactory.createTitledBorder("输入设置")
             add(wrapperLabelInput("分隔符：", originSplitText))
             add(wrapperLabelInput("每项前缀：", originItemPreText))
@@ -150,7 +99,6 @@ class TxtTabbedModule : TabbedModule {
 
         // 上方输出布局
         with(targetHeadPanel) {
-            layout = FlowLayout(FlowLayout.LEFT)
             border = BorderFactory.createTitledBorder("输出设置")
             add(wrapperLabelInput("分隔符：", targetSplitText))
             add(wrapperLabelInput("每项前缀：", targetItemPreText))
@@ -162,21 +110,16 @@ class TxtTabbedModule : TabbedModule {
         }
 
         // 加入上方控制面板
+        val headPanel = JPanel()
         with(headPanel) {
             layout = GridLayout(1, 2)
             add(originHeadPanel)
             add(targetHeadPanel)
         }
 
-        // 下方左边输入
-        initTextArea(leftTextArea)
-        initScrollPane(leftSp)
-
-        // 下方右边输出
-        initTextArea(rightTextArea)
-        initScrollPane(rightSp)
-
         // 加入下方面板
+        val downPanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
+        val rightSp = RTextScrollPane(rightTextArea)
         with(downPanel) {
             resizeWeight = 0.5
             leftComponent = leftSp
@@ -185,7 +128,6 @@ class TxtTabbedModule : TabbedModule {
 
         // 加入主面板
         with(mainPanel) {
-            layout = BorderLayout()
             add(headPanel, BorderLayout.NORTH)
             add(downPanel)
         }
@@ -196,19 +138,6 @@ class TxtTabbedModule : TabbedModule {
      */
     fun check(): Boolean {
         return leftChecker.check(true)
-    }
-
-    private fun initTextArea(textArea: RSyntaxTextArea) {
-        with(textArea) {
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            isCodeFoldingEnabled = true
-            showCaretLocation()
-        }
-    }
-
-    private fun initScrollPane(scrollPane: RTextScrollPane) {
-        scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-        scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     }
 
     private fun wrapperLabelInput(name: String, textField: JTextField): JPanel {

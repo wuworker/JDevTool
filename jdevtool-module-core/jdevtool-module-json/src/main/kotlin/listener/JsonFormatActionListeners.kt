@@ -2,7 +2,7 @@ package com.wxl.jdevtool.json.listener
 
 import com.wxl.jdevtool.ComponentListener
 import com.wxl.jdevtool.json.JsonTabbedModule
-import com.wxl.jdevtool.json.JsonUtils
+import com.wxl.jdevtool.util.JsonUtils
 import com.wxl.jdevtool.toast.ToastType
 import com.wxl.jdevtool.toast.Toasts
 import kotlinx.serialization.json.Json

@@ -3,14 +3,12 @@ package  com.wxl.jdevtool.collection
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
+import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.component.history.HistoryTextField
 import com.wxl.jdevtool.component.history.StorageHistoryList
 import com.wxl.jdevtool.extension.setHint
-import com.wxl.jdevtool.extension.showCaretLocation
 import com.wxl.jdevtool.validate.InputChecker
 import com.wxl.jdevtool.validate.InputValidateGroup
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -29,124 +27,76 @@ import javax.swing.text.JTextComponent
 @ComponentId("collectionTabbedModule")
 class CollectionTabbedModule : TabbedModule {
 
-    final override val mainPanel: JPanel
+    override val mainPanel = JPanel()
 
     @ComponentId("headPanel")
-    final val headPanel: JPanel
+    val headPanel = JPanel()
 
-    final val splitLabel: JLabel
-
-    final val splitTextField: JTextField
+    val splitTextField = HistoryTextField(StorageHistoryList("collection.split"))
 
     @ComponentId("deduplicateRadio")
-    final val deduplicateRadio: JRadioButton
+    val deduplicateRadio = JRadioButton("去重")
 
     @ComponentId("repeatRadio")
-    final val repeatRadio: JRadioButton
+    val repeatRadio = JRadioButton("重复元素")
 
     @ComponentId("unionRadio")
-    final val unionRadio: JRadioButton
+    val unionRadio = JRadioButton("并集")
 
     @ComponentId("intersectionRadio")
-    final val intersectionRadio: JRadioButton
+    val intersectionRadio = JRadioButton("交集")
 
     @ComponentId("diff1Radio")
-    final val diff1Radio: JRadioButton
+    val diff1Radio = JRadioButton("差集(1-2)")
 
     @ComponentId("diff2Radio")
-    final val diff2Radio: JRadioButton
+    val diff2Radio = JRadioButton("差集(2-1)")
 
-    final val radioGroup: ButtonGroup
+    val radioGroup = ButtonGroup()
 
     @ComponentId("executeBtn")
-    final val executeBtn: JButton
+    val executeBtn = JButton("执行")
 
-    final val downPanel: JSplitPane
+    val leftPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT)
 
-    final val leftPanel: JSplitPane
-
-    final val leftInputPanel1: JPanel
+    val leftInputPanel1 = JPanel(BorderLayout())
 
     @ComponentId("leftTextArea1")
-    final val leftTextArea1: RSyntaxTextArea
+    val leftTextArea1 = ComponentFactory.createTextArea()
 
-    final val leftTextAreaSp1: RTextScrollPane
+    val leftTextAreaSp1 = RTextScrollPane(leftTextArea1)
 
-    final val leftChecker1: InputChecker
-
-    final val leftInputPanel2: JPanel
-
-    @ComponentId("leftTextArea2")
-    final val leftTextArea2: RSyntaxTextArea
-
-    final val leftTextAreaSp2: RTextScrollPane
-
-    final val leftChecker2: InputChecker
-
-    final val rightPanel: JPanel
-
-    @ComponentId("rightTextArea")
-    final val rightTextArea: RSyntaxTextArea
-
-    init {
-        mainPanel = JPanel()
-
-        // 上方控制布局
-        headPanel = JPanel()
-        splitLabel = JLabel("分隔符:")
-        splitTextField = HistoryTextField(StorageHistoryList("collection.split"))
-        deduplicateRadio = JRadioButton("去重")
-        repeatRadio = JRadioButton("重复元素")
-        unionRadio = JRadioButton("并集")
-        intersectionRadio = JRadioButton("交集")
-        diff1Radio = JRadioButton("差集(1-2)")
-        diff2Radio = JRadioButton("差集(2-1)")
-        executeBtn = JButton("执行")
-        radioGroup = ButtonGroup()
-
-        // 下方布局
-        downPanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-
-        // 输入
-        leftPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT)
-        leftInputPanel1 = JPanel(BorderLayout())
-        leftTextArea1 = RSyntaxTextArea()
-        leftTextAreaSp1 = RTextScrollPane(leftTextArea1)
-        leftChecker1 = object : InputChecker(leftTextArea1, leftTextAreaSp1) {
-            override fun doCheck(component: JTextComponent): Boolean {
-                return !component.text.isNullOrBlank()
-            }
-
-            override fun documentUpdate(e: DocumentEvent) {
-                showNormal()
-            }
+    val leftChecker1 = object : InputChecker(leftTextArea1, leftTextAreaSp1) {
+        override fun doCheck(component: JTextComponent): Boolean {
+            return !component.text.isNullOrBlank()
         }
 
-        leftInputPanel2 = JPanel(BorderLayout())
-        leftTextArea2 = RSyntaxTextArea()
-        leftTextAreaSp2 = RTextScrollPane(leftTextArea2)
-        leftChecker2 = object : InputChecker(leftTextArea2, leftTextAreaSp2) {
-            override fun doCheck(component: JTextComponent): Boolean {
-                return !component.text.isNullOrBlank()
-            }
-
-            override fun documentUpdate(e: DocumentEvent) {
-                showNormal()
-            }
+        override fun documentUpdate(e: DocumentEvent) {
+            showNormal()
         }
-
-        // 输出
-        rightPanel = JPanel(BorderLayout())
-        rightTextArea = RSyntaxTextArea()
-
-        // 布局初始化
-        initUI()
     }
 
-    /**
-     * 布局初始化
-     */
-    private fun initUI() {
+    val leftInputPanel2 = JPanel(BorderLayout())
+
+    @ComponentId("leftTextArea2")
+    val leftTextArea2 = ComponentFactory.createTextArea()
+
+    val leftTextAreaSp2 = RTextScrollPane(leftTextArea2)
+
+    val leftChecker2 = object : InputChecker(leftTextArea2, leftTextAreaSp2) {
+        override fun doCheck(component: JTextComponent): Boolean {
+            return !component.text.isNullOrBlank()
+        }
+
+        override fun documentUpdate(e: DocumentEvent) {
+            showNormal()
+        }
+    }
+
+    @ComponentId("rightTextArea")
+    val rightTextArea = ComponentFactory.createTextArea()
+
+    override fun afterPropertiesSet() {
         // 上方控制布局
         deduplicateRadio.actionCommand = CollectionOps.DEDUPLICATE.name
         repeatRadio.actionCommand = CollectionOps.REPEAT.name
@@ -168,7 +118,7 @@ class CollectionTabbedModule : TabbedModule {
             layout = FlowLayout(FlowLayout.LEFT, 10, 10)
             border = BorderFactory.createTitledBorder("执行选项")
 
-            add(splitLabel)
+            add(JLabel("分隔符:"))
             add(splitTextField)
             add(deduplicateRadio)
             add(repeatRadio)
@@ -183,10 +133,6 @@ class CollectionTabbedModule : TabbedModule {
         leftInputPanel1.add(leftTextAreaSp1)
         leftInputPanel2.add(leftTextAreaSp2)
 
-        initTextArea(leftTextArea1)
-        initScrollPane(leftTextAreaSp1)
-        initTextArea(leftTextArea2)
-        initScrollPane(leftTextAreaSp2)
         with(leftPanel) {
             resizeWeight = 0.5
             leftComponent = leftInputPanel1
@@ -196,15 +142,15 @@ class CollectionTabbedModule : TabbedModule {
         leftInputPanel1.border = BorderFactory.createTitledBorder("集合")
 
         // 下方输出
-        initTextArea(rightTextArea)
+        val rightPanel = JPanel(BorderLayout())
         with(rightPanel) {
             border = BorderFactory.createTitledBorder("输出")
 
             val sp = RTextScrollPane(rightTextArea)
-            initScrollPane(sp)
             add(sp)
         }
 
+        val downPanel = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         with(downPanel) {
             resizeWeight = 0.6
             leftComponent = leftPanel
@@ -229,19 +175,6 @@ class CollectionTabbedModule : TabbedModule {
             validate.add(leftChecker2)
         }
         return validate.check(true)
-    }
-
-    private fun initTextArea(textArea: RSyntaxTextArea) {
-        with(textArea) {
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            isCodeFoldingEnabled = true
-            showCaretLocation()
-        }
-    }
-
-    private fun initScrollPane(scrollPane: RTextScrollPane) {
-        scrollPane.verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-        scrollPane.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
     }
 
     override val title = "集合处理"

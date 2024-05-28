@@ -3,10 +3,8 @@ package com.wxl.jdevtool.escape
 import com.formdev.flatlaf.extras.FlatSVGIcon
 import com.wxl.jdevtool.ComponentId
 import com.wxl.jdevtool.TabbedModule
-import com.wxl.jdevtool.extension.showCaretLocation
+import com.wxl.jdevtool.component.ComponentFactory
 import com.wxl.jdevtool.validate.InputChecker
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants
 import org.fife.ui.rtextarea.RTextScrollPane
 import org.springframework.core.annotation.Order
 import org.springframework.stereotype.Component
@@ -25,88 +23,60 @@ import javax.swing.text.JTextComponent
 @ComponentId("escapeTabbedModule")
 class EscapeTabbedModule : TabbedModule {
 
-    final override val mainPanel: JPanel
+    override val mainPanel = JPanel(BorderLayout())
 
     @ComponentId("headPanel")
-    final val headPanel: JPanel
+    val headPanel = JPanel(FlowLayout(FlowLayout.LEFT, 10, 10))
 
     @ComponentId("stringRadio")
-    final val stringRadio: JRadioButton
+    val stringRadio = JRadioButton("字符串")
 
     @ComponentId("jsonRadio")
-    final val jsonRadio: JRadioButton
+    val jsonRadio = JRadioButton("JSON")
 
     @ComponentId("xmlRadio")
-    final val xmlRadio: JRadioButton
+    val xmlRadio = JRadioButton("XML")
 
     @ComponentId("htmlRadio")
-    final val htmlRadio: JRadioButton
+    val htmlRadio = JRadioButton("HTML")
 
     @ComponentId("urlRadio")
-    final val urlRadio: JRadioButton
+    val urlRadio = JRadioButton("URL")
 
     @ComponentId("unicodeRadio")
-    final val unicodeRadio: JRadioButton
+    val unicodeRadio = JRadioButton("UNICODE")
 
-    final val radioGroup: ButtonGroup
-
-    final val downPanel: JSplitPane
+    val radioGroup = ButtonGroup()
 
     @ComponentId("escapeBtn")
-    final val escapeBtn: JButton
+    val escapeBtn = JButton("转义")
 
     @ComponentId("unescapeBtn")
-    final val unescapeBtn: JButton
+    val unescapeBtn = JButton("反转义")
 
     @ComponentId("leftTextArea")
-    final val leftTextArea: RSyntaxTextArea
-
-    final val leftTextAreaSp: RTextScrollPane
-
-    final val leftChecker: InputChecker
-
-    @ComponentId("rightTextArea")
-    final val rightTextArea: RSyntaxTextArea
-
-    final val rightTextAreaSp: RTextScrollPane
-
-    init {
-        mainPanel = JPanel()
-
-        headPanel = JPanel()
-        stringRadio = JRadioButton("字符串")
-        jsonRadio = JRadioButton("JSON")
-        xmlRadio = JRadioButton("XML")
-        htmlRadio = JRadioButton("HTML")
-        urlRadio = JRadioButton("URL")
-        unicodeRadio = JRadioButton("UNICODE")
-        escapeBtn = JButton("转义")
-        unescapeBtn = JButton("反转义")
-        radioGroup = ButtonGroup()
-
-        downPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT)
-        leftTextArea = RSyntaxTextArea()
-        leftTextAreaSp = RTextScrollPane(leftTextArea)
-        leftChecker = object : InputChecker(leftTextArea, leftTextAreaSp) {
-            override fun doCheck(component: JTextComponent): Boolean {
-                return !leftTextArea.text.isNullOrBlank()
-            }
-
-            override fun documentUpdate(e: DocumentEvent) {
-                showNormal()
-            }
-        }
-
-        rightTextArea = RSyntaxTextArea()
-        rightTextAreaSp = RTextScrollPane(rightTextArea)
-
-        initUI()
+    val leftTextArea = ComponentFactory.createTextArea {
+        lineWrap = true
     }
 
-    /**
-     * 布局初始化
-     */
-    private fun initUI() {
+    val leftTextAreaSp = RTextScrollPane(leftTextArea)
+
+    val leftChecker = object : InputChecker(leftTextArea, leftTextAreaSp) {
+        override fun doCheck(component: JTextComponent): Boolean {
+            return !leftTextArea.text.isNullOrBlank()
+        }
+
+        override fun documentUpdate(e: DocumentEvent) {
+            showNormal()
+        }
+    }
+
+    @ComponentId("rightTextArea")
+    val rightTextArea = ComponentFactory.createTextArea {
+        lineWrap = true
+    }
+
+    override fun afterPropertiesSet() {
         // 上方控制
         stringRadio.actionCommand = EscapeType.STRING.name
         stringRadio.isSelected = true
@@ -125,7 +95,6 @@ class EscapeTabbedModule : TabbedModule {
         }
 
         with(headPanel) {
-            layout = FlowLayout(FlowLayout.LEFT, 10, 10)
             border = BorderFactory.createTitledBorder("转义类型")
             add(stringRadio)
             add(jsonRadio)
@@ -144,12 +113,13 @@ class EscapeTabbedModule : TabbedModule {
 
         val rightPanel = JPanel(BorderLayout())
         rightPanel.border = BorderFactory.createTitledBorder("结果：")
+        val rightTextAreaSp = RTextScrollPane(rightTextArea)
         rightPanel.add(rightTextAreaSp)
 
-        initTextArea(leftTextArea)
-        initScrollPane(leftTextAreaSp)
-        initTextArea(rightTextArea)
-        initScrollPane(rightTextAreaSp)
+        leftTextAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+        rightTextAreaSp.horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+
+        val downPanel = JSplitPane(JSplitPane.VERTICAL_SPLIT)
         with(downPanel) {
             resizeWeight = 0.5
             leftComponent = leftPanel
@@ -157,25 +127,8 @@ class EscapeTabbedModule : TabbedModule {
         }
 
         with(mainPanel) {
-            layout = BorderLayout()
             add(headPanel, BorderLayout.NORTH)
             add(downPanel)
-        }
-    }
-
-    private fun initTextArea(textArea: RSyntaxTextArea) {
-        with(textArea) {
-            lineWrap = true
-            syntaxEditingStyle = SyntaxConstants.SYNTAX_STYLE_NONE
-            isCodeFoldingEnabled = true
-            showCaretLocation()
-        }
-    }
-
-    private fun initScrollPane(scrollPane: RTextScrollPane) {
-        with(scrollPane) {
-            verticalScrollBarPolicy = ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
-            horizontalScrollBarPolicy = ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
         }
     }
 

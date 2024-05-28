@@ -11,55 +11,36 @@ import javax.swing.*
  * Create by wuxingle on 2024/03/12
  * 非对称加密
  */
-class AsymmetricCipherPanel : JPanel() {
+class AsymmetricCipherPanel : JPanel(BorderLayout()) {
 
-    val algorithmComboBox: JComboBox<ASymmetricAlgorithm>
+    val algorithmComboBox = JComboBox(ASymmetricAlgorithm.values())
 
-    val keyLenComboBox: JComboBox<Int>
+    val keyLenComboBox = JComboBox(arrayOf(1024, 2048))
 
     @ComponentId("genKeyBtn")
-    val genKeyBtn: JButton
+    val genKeyBtn = JButton("生成密钥对")
 
-    val publicKeyPanel: ByteAreaPanel
+    val publicKeyPanel = ByteAreaPanel()
 
-    val privateKeyPanel: ByteAreaPanel
+    val privateKeyPanel = ByteAreaPanel()
 
-    val splitPane: JSplitPane
-
-    val enPanel: ByteAreaPanel
+    val enPanel = ByteAreaPanel()
 
     @ComponentId("priEnBtn")
-    val priEnBtn: JButton
+    val priEnBtn = JButton("私钥加密=>")
 
     @ComponentId("pubEnBtn")
-    val pubEnBtn: JButton
+    val pubEnBtn = JButton("公钥加密=>")
 
-    val dePanel: ByteAreaPanel
+    val dePanel = ByteAreaPanel()
 
     @ComponentId("priDeBtn")
-    val priDeBtn: JButton
+    val priDeBtn = JButton("私钥解密<=")
 
     @ComponentId("pubDeBtn")
-    val pubDeBtn: JButton
+    val pubDeBtn = JButton("公钥解密<=")
 
-    init {
-        algorithmComboBox = JComboBox(ASymmetricAlgorithm.values())
-        keyLenComboBox = JComboBox(arrayOf(1024, 2048))
-        genKeyBtn = JButton("生成密钥对")
-        publicKeyPanel = ByteAreaPanel()
-        privateKeyPanel = ByteAreaPanel()
-        splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
-        enPanel = ByteAreaPanel()
-        priEnBtn = JButton("私钥加密=>")
-        pubEnBtn = JButton("公钥加密=>")
-        dePanel = ByteAreaPanel()
-        priDeBtn = JButton("私钥解密<=")
-        pubDeBtn = JButton("公钥解密<=")
-
-        initUI()
-    }
-
-    private fun initUI() {
+    internal fun initUI() {
         val panel1 = JPanel(FlowLayout(FlowLayout.LEFT))
         with(panel1) {
             add(JLabel("非对称加密算法："))
@@ -106,13 +87,14 @@ class AsymmetricCipherPanel : JPanel() {
             addCustom(pubDeBtn)
             addCustom(priDeBtn)
         }
+
+        val splitPane = JSplitPane(JSplitPane.HORIZONTAL_SPLIT)
         with(splitPane) {
             resizeWeight = 0.5
             leftComponent = enPanel
             rightComponent = dePanel
         }
 
-        layout = BorderLayout()
         add(headPanel, BorderLayout.NORTH)
         add(splitPane)
     }

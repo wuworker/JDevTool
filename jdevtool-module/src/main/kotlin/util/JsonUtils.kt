@@ -1,4 +1,4 @@
-package com.wxl.jdevtool.json
+package com.wxl.jdevtool.util
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -21,4 +21,10 @@ object JsonUtils {
         return json.encodeToString(element)
     }
 
+    /**
+     * json压缩
+     */
+    fun compressJson(text: String): String {
+        return Json.parseToJsonElement(text).toString()
+    }
 }
