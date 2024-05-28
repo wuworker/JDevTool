@@ -74,6 +74,7 @@ class NewFileDialog(
         cancelBtn.addActionListener { dispose() }
 
         val okBtn = JButton("确定")
+        okBtn.background = UIManager.getColor("Button.default.background")
         val okChecker = object : InputChecker(filenameField) {
             override fun doCheck(component: JTextComponent): Boolean {
                 if (component.text.isNotEmpty() && component.text.isBlank()) {
