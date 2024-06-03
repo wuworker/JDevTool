@@ -69,8 +69,15 @@ class DubboMethodInvokeBtnListener(
             Toasts.show(ToastType.ERROR, "请求方法不能为空")
             return
         }
-        val pts = dubboTabbedModule.paramTypeField.copiedComponents.map { it.text }.toTypedArray()
-        val args = dubboTabbedModule.paramTextArea.copiedComponents.map { it.text }
+        var pts = dubboTabbedModule.paramTypeField.copiedComponents.map { it.text }.toTypedArray()
+        // 无参数
+        if (pts.size == 1 && pts[0].isNullOrBlank()) {
+            pts = emptyArray()
+        }
+        var args = dubboTabbedModule.paramTextArea.copiedComponents.map { it.text }
+        if (pts.isEmpty()) {
+            args = emptyList()
+        }
         val realArgs = try {
             getArgs(pts, args)
         } catch (e: Exception) {
@@ -103,6 +110,8 @@ class DubboMethodInvokeBtnListener(
                 } catch (e: Exception) {
                     log.error(e) { "dubbo invoke error: ${referenceConfig.`interface`}" }
                     return e.stackTraceToString()
+                } finally {
+                    referenceConfig.destroy()
                 }
             }
 
